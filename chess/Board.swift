@@ -18,6 +18,13 @@ class Board {
     
     func setBoardButtons(buttons: [String:NSButton]) {
         self.buttons = buttons
+        //initializing all boardDict keys as nil
+        for l in letters {
+            for n in numbers {
+                boardDict[l+n] = nil
+            }
+        }
+        //board setup
         //white
         for l in letters {
             boardDict[l+"2"] = BoardSquare(piece: Piece(pieceType: "pawn", color: "white"), button: buttons[l+"2"]!)
@@ -44,7 +51,7 @@ class Board {
         boardDict["E8"] = BoardSquare(piece: Piece(pieceType: "king", color: "black"), button:buttons["E8"]!)
         boardDict["D8"] = BoardSquare(piece: Piece(pieceType: "queen", color: "black"), button:buttons["D8"]!)
     }
-    
+    //this allows for boardDict to be sent to ViewController via method call
     func sendboardDict(completion: ((_ dict: Dictionary<String,BoardSquare>) -> Void)) {
         dict = boardDict
         
@@ -82,15 +89,103 @@ class Board {
                     legalMoves.append(letterCord+n)//vertical
                 }
             }
-            if boardSquare.piece.pieceType == "bishop" {
-                for n in 1...8 {
-                    legalMoves.append(letters[n]+String(n))//not how this should be, think about diagonals
+            if boardSquare.piece.pieceType == "knight" {
+                //if the coordinate is on the board, append to legal moves
+                //possible coordinate moves: +1,+2;-1,+2;-2,+1;-2,-1;-1,-2;+1,-2;+2,-1;+2;+1
+                if boardDict.keys.contains(letters[letterIndex+1]+numbers[numIndex+2]) {
+                    legalMoves.append(letters[letterIndex+1]+numbers[numIndex+2])
+                }
+                if boardDict.keys.contains(letters[letterIndex-1]+numbers[numIndex+2]) {
+                    legalMoves.append(letters[letterIndex-1]+numbers[numIndex+2])
+                }
+                if boardDict.keys.contains(letters[letterIndex-2]+numbers[numIndex+1]) {
+                    legalMoves.append(letters[letterIndex-2]+numbers[numIndex+1])
+                }
+                if boardDict.keys.contains(letters[letterIndex-2]+numbers[numIndex-1]) {
+                    legalMoves.append(letters[letterIndex-2]+numbers[numIndex-1])
+                }
+                if boardDict.keys.contains(letters[letterIndex-1]+numbers[numIndex-2]) {
+                    legalMoves.append(letters[letterIndex-1]+numbers[numIndex-2])
+                }
+                if boardDict.keys.contains(letters[letterIndex+1]+numbers[numIndex-2]) {
+                    legalMoves.append(letters[letterIndex+1]+numbers[numIndex-2])
+                }
+                if boardDict.keys.contains(letters[letterIndex+2]+numbers[numIndex-1]) {
+                    legalMoves.append(letters[letterIndex+2]+numbers[numIndex-1])
+                }
+                if boardDict.keys.contains(letters[letterIndex+2]+numbers[numIndex+1]) {
+                    legalMoves.append(letters[letterIndex+2]+numbers[numIndex+1])
                 }
             }
-            if boardSquare.piece.pieceType == "knight" {
-                
+            if boardSquare.piece.pieceType == "bishop" {
+                //up right diagonal
+                for l in letterIndex...8 {
+                    for n in numIndex...8 {
+                    legalMoves.append(letters[l] + numbers[n])
+                    }
+                }
+                //down left diagonal
+                for l in letterIndex...1 {
+                    for n in numIndex...1 {
+                        legalMoves.append(letters[l] + numbers[n])
+                    }
+                }
+                //down right diagonal
+                for l in letterIndex...8 {
+                    for n in numIndex...1 {
+                        legalMoves.append(letters[l] + numbers[n])
+                    }
+                }
+                //up left diagonal
+                for l in letterIndex...1 {
+                    for n in numIndex...8 {
+                        legalMoves.append(letters[l] + numbers[n])
+                    }
+                }
+            }
+            if boardSquare.piece.pieceType == "queen"{
+                //horizontal
+                for l in letters {
+                    legalMoves.append(l+numCord)
+                }
+                //vertical
+                for n in numbers {
+                    legalMoves.append(letterCord+n)
+                }
+                //up right diagonal
+                for l in letterIndex...8 {
+                    for n in numIndex...8 {
+                    legalMoves.append(letters[l] + numbers[n])
+                    }
+                }
+                //down left diagonal
+                for l in letterIndex...1 {
+                    for n in numIndex...1 {
+                        legalMoves.append(letters[l] + numbers[n])
+                    }
+                }
+                //down right diagonal
+                for l in letterIndex...8 {
+                    for n in numIndex...1 {
+                        legalMoves.append(letters[l] + numbers[n])
+                    }
+                }
+                //up left diagonal
+                for l in letterIndex...1 {
+                    for n in numIndex...8 {
+                        legalMoves.append(letters[l] + numbers[n])
+                    }
+                }
+            }
+            if boardSquare.piece.pieceType == "king" {
+                //can move one square in any direction
+                for i in -1...1 {
+                    for j in -1...1 {
+                        
+                        legalMoves.append(letters[letterIndex+i] + numbers[numIndex + j])
+                    }
+                }
             }
         }
     }
 }
-
