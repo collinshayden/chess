@@ -66,7 +66,6 @@ class Board {
             let numIndex = numbers.firstIndex(of: String(numCord))!
             var legalMoves = Array<String>()
             
-            
             if boardSquare.piece.pieceType == "pawn" {
                 if boardSquare.piece.color == "white" {
                     legalMoves.append(letterCord+numbers[numIndex+1])//white pawn can move up 1 square
@@ -92,57 +91,74 @@ class Board {
             if boardSquare.piece.pieceType == "knight" {
                 //if the coordinate is on the board, append to legal moves
                 //possible coordinate moves: +1,+2;-1,+2;-2,+1;-2,-1;-1,-2;+1,-2;+2,-1;+2;+1
-                if boardDict.keys.contains(letters[letterIndex+1]+numbers[numIndex+2]) {
-                    legalMoves.append(letters[letterIndex+1]+numbers[numIndex+2])
+                if letterIndex+1 < letters.count && numIndex+2 < numbers.count {
+                    if boardDict.keys.contains(letters[letterIndex+1]+numbers[numIndex+2]) {
+                        legalMoves.append(letters[letterIndex+1]+numbers[numIndex+2])
+                    }
                 }
-                if boardDict.keys.contains(letters[letterIndex-1]+numbers[numIndex+2]) {
-                    legalMoves.append(letters[letterIndex-1]+numbers[numIndex+2])
+                if letterIndex-1 >= 0 && numIndex+2 < numbers.count {
+                    if boardDict.keys.contains(letters[letterIndex-1]+numbers[numIndex+2]) {
+                        legalMoves.append(letters[letterIndex-1]+numbers[numIndex+2])
+                    }
                 }
-                if boardDict.keys.contains(letters[letterIndex-2]+numbers[numIndex+1]) {
-                    legalMoves.append(letters[letterIndex-2]+numbers[numIndex+1])
+                if letterIndex-2 >= 0 && numIndex+1 < numbers.count {
+                    if boardDict.keys.contains(letters[letterIndex-2]+numbers[numIndex+1]) {
+                        legalMoves.append(letters[letterIndex-2]+numbers[numIndex+1])
+                    }
                 }
-                if boardDict.keys.contains(letters[letterIndex-2]+numbers[numIndex-1]) {
-                    legalMoves.append(letters[letterIndex-2]+numbers[numIndex-1])
+                if letterIndex-2 >= 0 && numIndex-1 >= 0 {
+                    if boardDict.keys.contains(letters[letterIndex-2]+numbers[numIndex-1]) {
+                        legalMoves.append(letters[letterIndex-2]+numbers[numIndex-1])
+                    }
                 }
-                if boardDict.keys.contains(letters[letterIndex-1]+numbers[numIndex-2]) {
-                    legalMoves.append(letters[letterIndex-1]+numbers[numIndex-2])
+                if letterIndex-1 >= 0 && numIndex-2 >= 0 {
+                    if boardDict.keys.contains(letters[letterIndex-1]+numbers[numIndex-2]) {
+                        legalMoves.append(letters[letterIndex-1]+numbers[numIndex-2])
+                    }
                 }
-                if boardDict.keys.contains(letters[letterIndex+1]+numbers[numIndex-2]) {
-                    legalMoves.append(letters[letterIndex+1]+numbers[numIndex-2])
+                if letterIndex+1 < letters.count && numIndex-2 >= 0 {
+                    if boardDict.keys.contains(letters[letterIndex+1]+numbers[numIndex-2]) {
+                        legalMoves.append(letters[letterIndex+1]+numbers[numIndex-2])
+                    }
                 }
-                if boardDict.keys.contains(letters[letterIndex+2]+numbers[numIndex-1]) {
-                    legalMoves.append(letters[letterIndex+2]+numbers[numIndex-1])
+                if letterIndex+2 < letters.count && numIndex-1 >= 0 {
+                    if boardDict.keys.contains(letters[letterIndex+2]+numbers[numIndex-1]) {
+                        legalMoves.append(letters[letterIndex+2]+numbers[numIndex-1])
+                    }
                 }
-                if boardDict.keys.contains(letters[letterIndex+2]+numbers[numIndex+1]) {
-                    legalMoves.append(letters[letterIndex+2]+numbers[numIndex+1])
+                if letterIndex+2 < letters.count && numIndex+1 < numbers.count {
+                    if boardDict.keys.contains(letters[letterIndex+2]+numbers[numIndex+1]) {
+                        legalMoves.append(letters[letterIndex+2]+numbers[numIndex+1])
+                    }
                 }
             }
             if boardSquare.piece.pieceType == "bishop" {
                 //up right diagonal
-                for l in letterIndex...8 {
-                    for n in numIndex...8 {
+                for l in letterIndex...7 {
+                    for n in numIndex...7 {
                     legalMoves.append(letters[l] + numbers[n])
                     }
                 }
                 //down left diagonal
-                for l in letterIndex...1 {
-                    for n in numIndex...1 {
+                for l in stride(from: letterIndex, to: 0, by: -1) {
+                    for n in stride(from: numIndex, to: 0, by: -1) {
                         legalMoves.append(letters[l] + numbers[n])
                     }
                 }
                 //down right diagonal
-                for l in letterIndex...8 {
-                    for n in numIndex...1 {
+                for l in letterIndex...7 {
+                    for n in stride(from: numIndex, to: 0, by: -1) {
                         legalMoves.append(letters[l] + numbers[n])
                     }
                 }
                 //up left diagonal
-                for l in letterIndex...1 {
-                    for n in numIndex...8 {
+                for l in stride(from: letterIndex, to: 0, by: -1) {
+                    for n in numIndex...7 {
                         legalMoves.append(letters[l] + numbers[n])
                     }
                 }
             }
+
             if boardSquare.piece.pieceType == "queen"{
                 //horizontal
                 for l in letters {
@@ -153,26 +169,26 @@ class Board {
                     legalMoves.append(letterCord+n)
                 }
                 //up right diagonal
-                for l in letterIndex...8 {
-                    for n in numIndex...8 {
+                for l in letterIndex...7 {
+                    for n in numIndex...7 {
                     legalMoves.append(letters[l] + numbers[n])
                     }
                 }
                 //down left diagonal
-                for l in letterIndex...1 {
-                    for n in numIndex...1 {
+                for l in stride(from: letterIndex, to: 0, by: -1) {
+                    for n in stride(from: numIndex, to: 0, by: -1) {
                         legalMoves.append(letters[l] + numbers[n])
                     }
                 }
                 //down right diagonal
-                for l in letterIndex...8 {
-                    for n in numIndex...1 {
+                for l in letterIndex...7 {
+                    for n in stride(from: numIndex, to: 0, by: -1) {
                         legalMoves.append(letters[l] + numbers[n])
                     }
                 }
                 //up left diagonal
-                for l in letterIndex...1 {
-                    for n in numIndex...8 {
+                for l in stride(from: letterIndex, to: 0, by: -1) {
+                    for n in numIndex...7 {
                         legalMoves.append(letters[l] + numbers[n])
                     }
                 }
@@ -181,11 +197,24 @@ class Board {
                 //can move one square in any direction
                 for i in -1...1 {
                     for j in -1...1 {
-                        
-                        legalMoves.append(letters[letterIndex+i] + numbers[numIndex + j])
+                        if letterIndex+i >= 0 && numIndex+j >= 0 && letterIndex+i < letters.count && numIndex+j < numbers.count {
+                            legalMoves.append(letters[letterIndex+i] + numbers[numIndex + j])
                     }
                 }
             }
+            }
+//            for cord in legalMoves {
+//                if boardDict[cord] == nil {
+//                    for l in letters{
+//                        for n in numbers {
+//                            if boardDict[l+n] == nil {
+//                                buttons[l+n]?.image = nil
+//                            }
+//                        }
+//                    }
+//                    buttons[cord]?.image = NSImage(named: "legalmovedot")
+//                }
+//            }
         }
     }
 }
