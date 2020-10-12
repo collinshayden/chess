@@ -9,12 +9,10 @@
 import Foundation
 import Cocoa
 
-
 class Board {
     var boardDict = [String:BoardSquare]()
     var dict = [String:BoardSquare]()
     var buttons = [String:NSButton]()
-    
     
     func setBoardButtons(buttons: [String:NSButton]) {
         self.buttons = buttons
@@ -65,6 +63,7 @@ class Board {
             let letterIndex = letters.firstIndex(of: String(letterCord))!
             let numIndex = numbers.firstIndex(of: String(numCord))!
             var legalMoves = Array<String>()
+            var i = 1
             
             if boardSquare.piece.pieceType == "pawn" {
                 if boardSquare.piece.color == "white" {
@@ -89,8 +88,8 @@ class Board {
                 }
             }
             if boardSquare.piece.pieceType == "knight" {
-                //if the coordinate is on the board, append to legal moves
                 //possible coordinate moves: +1,+2;-1,+2;-2,+1;-2,-1;-1,-2;+1,-2;+2,-1;+2;+1
+                //unfortunately, I'm not sure of a way to for loop the knight moves, so it has to be hardcoded.
                 if letterIndex+1 < letters.count && numIndex+2 < numbers.count {
                     if boardDict.keys.contains(letters[letterIndex+1]+numbers[numIndex+2]) {
                         legalMoves.append(letters[letterIndex+1]+numbers[numIndex+2])
@@ -134,28 +133,28 @@ class Board {
             }
             if boardSquare.piece.pieceType == "bishop" {
                 //up right diagonal
-                for l in letterIndex...7 {
-                    for n in numIndex...7 {
-                    legalMoves.append(letters[l] + numbers[n])
-                    }
+                i = 1
+                while letterIndex+i <= 7 && numIndex+i <= 7{
+                    legalMoves.append(letters[letterIndex+i]+numbers[numIndex+i])
+                    i += 1
                 }
                 //down left diagonal
-                for l in stride(from: letterIndex, to: 0, by: -1) {
-                    for n in stride(from: numIndex, to: 0, by: -1) {
-                        legalMoves.append(letters[l] + numbers[n])
-                    }
+                i = 1
+                while letterIndex-i >= 0 && numIndex-i >= 0{
+                    legalMoves.append(letters[letterIndex-i]+numbers[numIndex-i])
+                    i += 1
                 }
-                //down right diagonal
-                for l in letterIndex...7 {
-                    for n in stride(from: numIndex, to: 0, by: -1) {
-                        legalMoves.append(letters[l] + numbers[n])
-                    }
+//                //down right diagonal
+                i = 1
+                while letterIndex+i <= 7 && numIndex-i >= 0{
+                    legalMoves.append(letters[letterIndex+i]+numbers[numIndex-i])
+                    i += 1
                 }
-                //up left diagonal
-                for l in stride(from: letterIndex, to: 0, by: -1) {
-                    for n in numIndex...7 {
-                        legalMoves.append(letters[l] + numbers[n])
-                    }
+//                //up left diagonal
+                i = 1
+                while letterIndex-i >= 0 && numIndex+i <= 7{
+                    legalMoves.append(letters[letterIndex-i]+numbers[numIndex+i])
+                    i += 1
                 }
             }
 
@@ -169,28 +168,28 @@ class Board {
                     legalMoves.append(letterCord+n)
                 }
                 //up right diagonal
-                for l in letterIndex...7 {
-                    for n in numIndex...7 {
-                    legalMoves.append(letters[l] + numbers[n])
-                    }
+                var i = 1
+                while letterIndex+i <= 7 && numIndex+i <= 7{
+                    legalMoves.append(letters[letterIndex+i]+numbers[numIndex+i])
+                    i += 1
                 }
                 //down left diagonal
-                for l in stride(from: letterIndex, to: 0, by: -1) {
-                    for n in stride(from: numIndex, to: 0, by: -1) {
-                        legalMoves.append(letters[l] + numbers[n])
-                    }
+                i = 1
+                while letterIndex-i >= 0 && numIndex-i >= 0{
+                    legalMoves.append(letters[letterIndex-i]+numbers[numIndex-i])
+                    i += 1
                 }
-                //down right diagonal
-                for l in letterIndex...7 {
-                    for n in stride(from: numIndex, to: 0, by: -1) {
-                        legalMoves.append(letters[l] + numbers[n])
-                    }
+//                //down right diagonal
+                i = 1
+                while letterIndex+i <= 7 && numIndex-i >= 0{
+                    legalMoves.append(letters[letterIndex+i]+numbers[numIndex-i])
+                    i += 1
                 }
-                //up left diagonal
-                for l in stride(from: letterIndex, to: 0, by: -1) {
-                    for n in numIndex...7 {
-                        legalMoves.append(letters[l] + numbers[n])
-                    }
+//                //up left diagonal
+                i = 1
+                while letterIndex-i >= 0 && numIndex+i <= 7{
+                    legalMoves.append(letters[letterIndex-i]+numbers[numIndex+i])
+                    i += 1
                 }
             }
             if boardSquare.piece.pieceType == "king" {
@@ -199,22 +198,26 @@ class Board {
                     for j in -1...1 {
                         if letterIndex+i >= 0 && numIndex+j >= 0 && letterIndex+i < letters.count && numIndex+j < numbers.count {
                             legalMoves.append(letters[letterIndex+i] + numbers[numIndex + j])
+                        }
                     }
                 }
             }
+            showLegalMoves(arr: legalMoves)
+        }
+    }
+    func showLegalMoves(arr: Array<String>) {
+        let legalMoves = arr
+        for l in letters {
+            for n in numbers {
+                if boardDict[l+n] == nil {
+                    buttons[l+n]?.image = nil
+                }
             }
-//            for cord in legalMoves {
-//                if boardDict[cord] == nil {
-//                    for l in letters{
-//                        for n in numbers {
-//                            if boardDict[l+n] == nil {
-//                                buttons[l+n]?.image = nil
-//                            }
-//                        }
-//                    }
-//                    buttons[cord]?.image = NSImage(named: "legalmovedot")
-//                }
-//            }
+        }
+        for cord in legalMoves {
+            if boardDict[cord] == nil {
+                buttons[cord]?.image = NSImage(named: "legalmovedot")
+            }
         }
     }
 }
