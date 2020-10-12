@@ -80,11 +80,24 @@ class Board {
                 }
             }
             if boardSquare.piece.pieceType == "rook" {
-                for l in letters {
-                    legalMoves.append(l+numCord)//horizontal
+                i = 1
+                while letterIndex-i >= 0 {
+                    legalMoves.append(letters[letterIndex-i]+numCord)//left
+                    i += 1
                 }
-                for n in numbers {
-                    legalMoves.append(letterCord+n)//vertical
+                i = 1
+                while letterIndex+i <= 7 {
+                    legalMoves.append(letters[letterIndex+i]+numCord)//right
+                    i += 1
+                }
+                i = 1
+                while numIndex+i <= 7 {
+                    legalMoves.append(letterCord+numbers[numIndex+i])//up
+                    i += 1
+                }
+                while numIndex-i >= 0 {
+                    legalMoves.append(letterCord+numbers[numIndex-i])//down
+                    i += 1
                 }
             }
             if boardSquare.piece.pieceType == "knight" {
@@ -128,13 +141,13 @@ class Board {
                     legalMoves.append(letters[letterIndex-i]+numbers[numIndex-i])
                     i += 1
                 }
-//                //down right diagonal
+                //down right diagonal
                 i = 1
                 while letterIndex+i <= 7 && numIndex-i >= 0{
                     legalMoves.append(letters[letterIndex+i]+numbers[numIndex-i])
                     i += 1
                 }
-//                //up left diagonal
+                //up left diagonal
                 i = 1
                 while letterIndex-i >= 0 && numIndex+i <= 7{
                     legalMoves.append(letters[letterIndex-i]+numbers[numIndex+i])
@@ -143,13 +156,24 @@ class Board {
             }
 
             if boardSquare.piece.pieceType == "queen"{
-                //horizontal
-                for l in letters {
-                    legalMoves.append(l+numCord)
+                i = 1
+                while letterIndex-i >= 0 {
+                    legalMoves.append(letters[letterIndex-i]+numCord)//left
+                    i += 1
                 }
-                //vertical
-                for n in numbers {
-                    legalMoves.append(letterCord+n)
+                i = 1
+                while letterIndex+i <= 7 {
+                    legalMoves.append(letters[letterIndex+i]+numCord)//right
+                    i += 1
+                }
+                i = 1
+                while numIndex+i <= 7 {
+                    legalMoves.append(letterCord+numbers[numIndex+i])//up
+                    i += 1
+                }
+                while numIndex-i >= 0 {
+                    legalMoves.append(letterCord+numbers[numIndex-i])//down
+                    i += 1
                 }
                 //up right diagonal
                 var i = 1
@@ -191,6 +215,7 @@ class Board {
     }
     func showLegalMoves(arr: Array<String>) {
         let legalMoves = arr
+        //resets the display of legal moves for every click of a piece
         for l in letters {
             for n in numbers {
                 if boardDict[l+n] == nil {
