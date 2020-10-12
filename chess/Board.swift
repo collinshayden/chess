@@ -88,47 +88,31 @@ class Board {
                 }
             }
             if boardSquare.piece.pieceType == "knight" {
-                //possible coordinate moves: +1,+2;-1,+2;-2,+1;-2,-1;-1,-2;+1,-2;+2,-1;+2;+1
+                //possible coordinate moves: +1,+2; -1,+2; -2,+1; -2,-1; -1,-2; +1,-2; +2,-1; +2;+1
                 //unfortunately, I'm not sure of a way to for loop the knight moves, so it has to be hardcoded.
-                if letterIndex+1 < letters.count && numIndex+2 < numbers.count {
-                    if boardDict.keys.contains(letters[letterIndex+1]+numbers[numIndex+2]) {
-                        legalMoves.append(letters[letterIndex+1]+numbers[numIndex+2])
-                    }
+                if letterIndex+1 <= 7 && numIndex+2 <= 7 {
+                    legalMoves.append(letters[letterIndex+1]+numbers[numIndex+2])
                 }
-                if letterIndex-1 >= 0 && numIndex+2 < numbers.count {
-                    if boardDict.keys.contains(letters[letterIndex-1]+numbers[numIndex+2]) {
-                        legalMoves.append(letters[letterIndex-1]+numbers[numIndex+2])
-                    }
+                if letterIndex-1 >= 0 && numIndex+2 <= 7 {
+                    legalMoves.append(letters[letterIndex-1]+numbers[numIndex+2])
                 }
-                if letterIndex-2 >= 0 && numIndex+1 < numbers.count {
-                    if boardDict.keys.contains(letters[letterIndex-2]+numbers[numIndex+1]) {
-                        legalMoves.append(letters[letterIndex-2]+numbers[numIndex+1])
-                    }
+                if letterIndex-2 >= 0 && numIndex+1 <= 7 {
+                    legalMoves.append(letters[letterIndex-2]+numbers[numIndex+1])
                 }
                 if letterIndex-2 >= 0 && numIndex-1 >= 0 {
-                    if boardDict.keys.contains(letters[letterIndex-2]+numbers[numIndex-1]) {
-                        legalMoves.append(letters[letterIndex-2]+numbers[numIndex-1])
-                    }
+                    legalMoves.append(letters[letterIndex-2]+numbers[numIndex-1])
                 }
                 if letterIndex-1 >= 0 && numIndex-2 >= 0 {
-                    if boardDict.keys.contains(letters[letterIndex-1]+numbers[numIndex-2]) {
-                        legalMoves.append(letters[letterIndex-1]+numbers[numIndex-2])
-                    }
+                    legalMoves.append(letters[letterIndex-1]+numbers[numIndex-2])
                 }
-                if letterIndex+1 < letters.count && numIndex-2 >= 0 {
-                    if boardDict.keys.contains(letters[letterIndex+1]+numbers[numIndex-2]) {
-                        legalMoves.append(letters[letterIndex+1]+numbers[numIndex-2])
-                    }
+                if letterIndex+1 <= 7 && numIndex-2 >= 0 {
+                    legalMoves.append(letters[letterIndex+1]+numbers[numIndex-2])
                 }
-                if letterIndex+2 < letters.count && numIndex-1 >= 0 {
-                    if boardDict.keys.contains(letters[letterIndex+2]+numbers[numIndex-1]) {
-                        legalMoves.append(letters[letterIndex+2]+numbers[numIndex-1])
-                    }
+                if letterIndex+2 <= 7 && numIndex-1 >= 0 {
+                    legalMoves.append(letters[letterIndex+2]+numbers[numIndex-1])
                 }
-                if letterIndex+2 < letters.count && numIndex+1 < numbers.count {
-                    if boardDict.keys.contains(letters[letterIndex+2]+numbers[numIndex+1]) {
-                        legalMoves.append(letters[letterIndex+2]+numbers[numIndex+1])
-                    }
+                if letterIndex+2 <= 7 && numIndex+1 <= 7 {
+                    legalMoves.append(letters[letterIndex+2]+numbers[numIndex+1])
                 }
             }
             if boardSquare.piece.pieceType == "bishop" {
