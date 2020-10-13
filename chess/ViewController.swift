@@ -369,7 +369,6 @@ class ViewController: NSViewController {
         for l in letters {
             for n in numbers {
                 let pieceColor = boardDict[l+n]?.piece.color
-
                 if (boardDict[l+n]?.piece.pieceType == "pawn"){
                     buttons[l+n]!.image = NSImage(named: "pawn_" + pieceColor!)
                 }
