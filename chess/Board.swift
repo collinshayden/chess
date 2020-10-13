@@ -23,14 +23,6 @@ class Board {
         }
         //board setup
         //white
-        boardDict["D4"] = BoardSquare(piece: Piece(pieceType: "queen", color: "black"), button: buttons["D4"]!)
-        boardDict["C4"] = BoardSquare(piece: Piece(pieceType: "pawn", color: "white"), button: buttons["C4"]!)
-
-
-
-
-
-
         for l in letters {
             boardDict[l+"2"] = BoardSquare(piece: Piece(pieceType: "pawn", color: "white"), button: buttons[l+"2"]!)
         }
@@ -59,7 +51,6 @@ class Board {
     //this allows for boardDict to be sent to ViewController via method call
     func sendboardDict(completion: ((_ dict: Dictionary<String,BoardSquare>) -> Void)) {
         dict = boardDict
-        
         completion(dict)
     }
     

@@ -341,23 +341,18 @@ class ViewController: NSViewController {
         buttonDict["H6"] = ButtonH6
         buttonDict["H7"] = ButtonH7
         buttonDict["H8"] = ButtonH8
-        
         board.setBoardButtons(buttons: buttonDict)
         
         board.sendboardDict { [weak self] (dict: Dictionary<String,BoardSquare>) in
               self?.setboardDict(dict: dict)//getting boardDict from the board class
         }
         updateBoardView(buttons: buttonDict)
-
-        
-        
         // Do any additional setup after loading the view.
     }
     
     func setboardDict(dict: Dictionary<String,BoardSquare>){
         boardDict = dict
     }
-    
 
     override var representedObject: Any? {
         didSet {
