@@ -5,7 +5,6 @@
 //  Created by Hayden Collins on 9/29/20.
 //  Copyright © 2020 Hayden Collins. All rights reserved.
 //
-
 import Foundation
 import Cocoa
 
@@ -80,23 +79,59 @@ class Board {
                 }
             }
             if boardSquare.piece.pieceType == "rook" {
+                //left
                 i = 1
                 while letterIndex-i >= 0 {
-                    legalMoves.append(letters[letterIndex-i]+numCord)//left
+                    if boardDict[letters[letterIndex-i]+numCord] != nil {//if there is a piece on a legal move square
+                        if boardDict[letters[letterIndex-i]+numCord]?.piece.color != boardSquare.piece.color {// and the piece is opposite color
+                            legalMoves.append(letters[letterIndex-i]+numCord)//it is a legal move
+                        }
+                        break
+                    }
+                    else {
+                        legalMoves.append(letters[letterIndex-i]+numCord)//if there is no piece, append to legalmoves
+                    }
                     i += 1
                 }
+                //right
                 i = 1
                 while letterIndex+i <= 7 {
-                    legalMoves.append(letters[letterIndex+i]+numCord)//right
+                    if boardDict[letters[letterIndex+i]+numCord] != nil {
+                        if boardDict[letters[letterIndex+i]+numCord]?.piece.color != boardSquare.piece.color {
+                            legalMoves.append(letters[letterIndex+i]+numCord)
+                        }
+                        break
+                    }
+                    else {
+                        legalMoves.append(letters[letterIndex+i]+numCord)
+                    }
                     i += 1
                 }
+                //up
                 i = 1
                 while numIndex+i <= 7 {
-                    legalMoves.append(letterCord+numbers[numIndex+i])//up
+                    if boardDict[letterCord+numbers[numIndex+i]] != nil {
+                        if boardDict[letterCord+numbers[numIndex+i]]?.piece.color != boardSquare.piece.color {
+                            legalMoves.append(letterCord+numbers[numIndex+i])
+                        }
+                        break
+                    }
+                    else {
+                        legalMoves.append(letterCord+numbers[numIndex+i])
+                    }
                     i += 1
                 }
+                //down
                 while numIndex-i >= 0 {
-                    legalMoves.append(letterCord+numbers[numIndex-i])//down
+                    if boardDict[letterCord+numbers[numIndex-i]] != nil {
+                        if boardDict[letterCord+numbers[numIndex-i]]?.piece.color != boardSquare.piece.color {
+                            legalMoves.append(letterCord+numbers[numIndex-i])
+                        }
+                        break
+                    }
+                    else {
+                        legalMoves.append(letterCord+numbers[numIndex-i])
+                    }
                     i += 1
                 }
             }
@@ -132,71 +167,171 @@ class Board {
                 //up right diagonal
                 i = 1
                 while letterIndex+i <= 7 && numIndex+i <= 7{
-                    legalMoves.append(letters[letterIndex+i]+numbers[numIndex+i])
+                    if boardDict[letters[letterIndex+i]+numbers[numIndex+i]] != nil {//if there is a piece on a legal move square
+                        if boardDict[letters[letterIndex+i]+numbers[numIndex+i]]?.piece.color != boardSquare.piece.color {//and it is opposite color
+                            legalMoves.append(letters[letterIndex+i]+numbers[numIndex+i])//it is a legal move
+                        }
+                        break
+                    }
+                    else {
+                        legalMoves.append(letters[letterIndex+i]+numbers[numIndex+i])//if there is no piece, it is a legal move
+                    }
                     i += 1
                 }
                 //down left diagonal
                 i = 1
                 while letterIndex-i >= 0 && numIndex-i >= 0{
-                    legalMoves.append(letters[letterIndex-i]+numbers[numIndex-i])
+                    if boardDict[letters[letterIndex-i]+numbers[numIndex-i]] != nil {
+                        if boardDict[letters[letterIndex-i]+numbers[numIndex-i]]?.piece.color != boardSquare.piece.color {
+                            legalMoves.append(letters[letterIndex-i]+numbers[numIndex-i])
+                        }
+                        break
+                    }
+                    else {
+                        legalMoves.append(letters[letterIndex-i]+numbers[numIndex-i])
+                    }
                     i += 1
                 }
                 //down right diagonal
                 i = 1
                 while letterIndex+i <= 7 && numIndex-i >= 0{
-                    legalMoves.append(letters[letterIndex+i]+numbers[numIndex-i])
+                    if boardDict[letters[letterIndex+i]+numbers[numIndex-i]] != nil {
+                        if boardDict[letters[letterIndex+i]+numbers[numIndex-i]]?.piece.color != boardSquare.piece.color {
+                            legalMoves.append(letters[letterIndex+i]+numbers[numIndex-i])
+                        }
+                        break
+                    }
+                    else {
+                        legalMoves.append(letters[letterIndex+i]+numbers[numIndex-i])
+                    }
                     i += 1
                 }
                 //up left diagonal
                 i = 1
                 while letterIndex-i >= 0 && numIndex+i <= 7{
-                    legalMoves.append(letters[letterIndex-i]+numbers[numIndex+i])
+                    if boardDict[letters[letterIndex-i]+numbers[numIndex+i]] != nil {
+                        if boardDict[letters[letterIndex-i]+numbers[numIndex+i]]?.piece.color != boardSquare.piece.color {
+                            legalMoves.append(letters[letterIndex-i]+numbers[numIndex+i])
+                        }
+                        break
+                    }
+                    else {
+                        legalMoves.append(letters[letterIndex-i]+numbers[numIndex+i])
+                    }
                     i += 1
                 }
             }
 
             if boardSquare.piece.pieceType == "queen"{
+                //left
                 i = 1
                 while letterIndex-i >= 0 {
-                    legalMoves.append(letters[letterIndex-i]+numCord)//left
+                    if boardDict[letters[letterIndex-i]+numCord] != nil {//if there is a piece on a legal move square
+                        if boardDict[letters[letterIndex-i]+numCord]?.piece.color != boardSquare.piece.color {// and the piece is opposite color
+                            legalMoves.append(letters[letterIndex-i]+numCord)//it is a legal move
+                        }
+                        break
+                    }
+                    else {
+                        legalMoves.append(letters[letterIndex-i]+numCord)//if there is no piece, append to legalmoves
+                    }
                     i += 1
                 }
+                //right
                 i = 1
                 while letterIndex+i <= 7 {
-                    legalMoves.append(letters[letterIndex+i]+numCord)//right
+                    if boardDict[letters[letterIndex+i]+numCord] != nil {
+                        if boardDict[letters[letterIndex+i]+numCord]?.piece.color != boardSquare.piece.color {
+                            legalMoves.append(letters[letterIndex+i]+numCord)
+                        }
+                        break
+                    }
+                    else {
+                        legalMoves.append(letters[letterIndex+i]+numCord)
+                    }
                     i += 1
                 }
+                //up
                 i = 1
                 while numIndex+i <= 7 {
-                    legalMoves.append(letterCord+numbers[numIndex+i])//up
+                    if boardDict[letterCord+numbers[numIndex+i]] != nil {
+                        if boardDict[letterCord+numbers[numIndex+i]]?.piece.color != boardSquare.piece.color {
+                            legalMoves.append(letterCord+numbers[numIndex+i])
+                        }
+                        break
+                    }
+                    else {
+                        legalMoves.append(letterCord+numbers[numIndex+i])
+                    }
                     i += 1
                 }
+                //down
                 while numIndex-i >= 0 {
-                    legalMoves.append(letterCord+numbers[numIndex-i])//down
+                    if boardDict[letterCord+numbers[numIndex-i]] != nil {
+                        if boardDict[letterCord+numbers[numIndex-i]]?.piece.color != boardSquare.piece.color {
+                            legalMoves.append(letterCord+numbers[numIndex-i])
+                        }
+                        break
+                    }
+                    else {
+                        legalMoves.append(letterCord+numbers[numIndex-i])
+                    }
                     i += 1
                 }
                 //up right diagonal
-                var i = 1
+                i = 1
                 while letterIndex+i <= 7 && numIndex+i <= 7{
-                    legalMoves.append(letters[letterIndex+i]+numbers[numIndex+i])
+                    if boardDict[letters[letterIndex+i]+numbers[numIndex+i]] != nil {//if there is a piece on a legal move square
+                        if boardDict[letters[letterIndex+i]+numbers[numIndex+i]]?.piece.color != boardSquare.piece.color {//and it is opposite color
+                            legalMoves.append(letters[letterIndex+i]+numbers[numIndex+i])//it is a legal move
+                        }
+                        break
+                    }
+                    else {
+                        legalMoves.append(letters[letterIndex+i]+numbers[numIndex+i])//if there is no piece, it is a legal move
+                    }
                     i += 1
                 }
                 //down left diagonal
                 i = 1
                 while letterIndex-i >= 0 && numIndex-i >= 0{
-                    legalMoves.append(letters[letterIndex-i]+numbers[numIndex-i])
+                    if boardDict[letters[letterIndex-i]+numbers[numIndex-i]] != nil {
+                        if boardDict[letters[letterIndex-i]+numbers[numIndex-i]]?.piece.color != boardSquare.piece.color {
+                            legalMoves.append(letters[letterIndex-i]+numbers[numIndex-i])
+                        }
+                        break
+                    }
+                    else {
+                        legalMoves.append(letters[letterIndex-i]+numbers[numIndex-i])
+                    }
                     i += 1
                 }
-//                //down right diagonal
+                //down right diagonal
                 i = 1
                 while letterIndex+i <= 7 && numIndex-i >= 0{
-                    legalMoves.append(letters[letterIndex+i]+numbers[numIndex-i])
+                    if boardDict[letters[letterIndex+i]+numbers[numIndex-i]] != nil {
+                        if boardDict[letters[letterIndex+i]+numbers[numIndex-i]]?.piece.color != boardSquare.piece.color {
+                            legalMoves.append(letters[letterIndex+i]+numbers[numIndex-i])
+                        }
+                        break
+                    }
+                    else {
+                        legalMoves.append(letters[letterIndex+i]+numbers[numIndex-i])
+                    }
                     i += 1
                 }
-//                //up left diagonal
+                //up left diagonal
                 i = 1
                 while letterIndex-i >= 0 && numIndex+i <= 7{
-                    legalMoves.append(letters[letterIndex-i]+numbers[numIndex+i])
+                    if boardDict[letters[letterIndex-i]+numbers[numIndex+i]] != nil {
+                        if boardDict[letters[letterIndex-i]+numbers[numIndex+i]]?.piece.color != boardSquare.piece.color {
+                            legalMoves.append(letters[letterIndex-i]+numbers[numIndex+i])
+                        }
+                        break
+                    }
+                    else {
+                        legalMoves.append(letters[letterIndex-i]+numbers[numIndex+i])
+                    }
                     i += 1
                 }
             }
@@ -204,8 +339,20 @@ class Board {
                 //can move one square in any direction
                 for i in -1...1 {
                     for j in -1...1 {
+                        //if cord is on board
                         if letterIndex+i >= 0 && numIndex+j >= 0 && letterIndex+i < letters.count && numIndex+j < numbers.count {
-                            legalMoves.append(letters[letterIndex+i] + numbers[numIndex + j])
+                            //if there is a piece there
+                            if boardDict[letters[letterIndex+i] + numbers[numIndex + j]] != nil {
+                                //if the piece is not the same color
+                                if boardDict[letters[letterIndex+i] + numbers[numIndex + j]]?.piece.color != boardSquare.piece.color {
+                                    //that cord is a legal move
+                                    legalMoves.append(letters[letterIndex+i] + numbers[numIndex + j])
+                                }
+                                break
+                            }
+                            else {
+                                legalMoves.append(letters[letterIndex+i] + numbers[numIndex + j])//if there is no piece, it is a legal move
+                            }
                         }
                     }
                 }
