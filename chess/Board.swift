@@ -12,6 +12,10 @@ class Board {
     var boardDict = [String:BoardSquare]()
     var dict = [String:BoardSquare]()
     var buttons = [String:NSButton]()
+    var legalMoves = Array<String>()
+    var whiteTurn = true
+    var boardSquareToMove : BoardSquare?
+    var originalCord : String!
     
     func setBoardButtons(buttons: [String:NSButton]) {
         self.buttons = buttons
@@ -48,32 +52,128 @@ class Board {
         boardDict["E8"] = BoardSquare(piece: Piece(pieceType: "king", color: "black"), button:buttons["E8"]!)
         boardDict["D8"] = BoardSquare(piece: Piece(pieceType: "queen", color: "black"), button:buttons["D8"]!)
     }
-    //this allows for boardDict to be sent to ViewController via method call
-    func sendboardDict(completion: ((_ dict: Dictionary<String,BoardSquare>) -> Void)) {
-        dict = boardDict
-        completion(dict)
+    
+    //this displays the pieces on the view based on boardDict
+    func updateBoardView(buttons: Dictionary<String,NSButton>){
+        for l in letters {
+            for n in numbers {
+                let pieceColor = boardDict[l+n]?.piece.color
+                if (boardDict[l+n]?.piece.pieceType == "pawn"){
+                    buttons[l+n]!.image = NSImage(named: "pawn_" + pieceColor!)
+                }
+                if (boardDict[l+n]?.piece.pieceType == "rook"){
+                    buttons[l+n]!.image = NSImage(named: "rook_" + pieceColor!)
+                }
+                if (boardDict[l+n]?.piece.pieceType == "bishop"){
+                    buttons[l+n]!.image = NSImage(named: "bishop_" + pieceColor!)
+                }
+                if (boardDict[l+n]?.piece.pieceType == "knight"){
+                    buttons[l+n]!.image = NSImage(named: "knight_" + pieceColor!)
+                }
+                if (boardDict[l+n]?.piece.pieceType == "king"){
+                    buttons[l+n]!.image = NSImage(named: "king_" + pieceColor!)
+                }
+                if (boardDict[l+n]?.piece.pieceType == "queen"){
+                    buttons[l+n]!.image = NSImage(named: "queen_" + pieceColor!)
+                }
+            }
+        }
     }
     
     func boardSquareClicked(boardSquareLocation: String) {//when a button is clicked
+        if boardSquareToMove == nil{
+            if boardDict[boardSquareLocation]?.piece.color == "white" && whiteTurn == true{
+                legalMoves = getLegalMoves(boardSquareLocation: boardSquareLocation)
+                showLegalMoves(arr: legalMoves)
+                boardSquareToMove = boardDict[boardSquareLocation]
+                originalCord = boardSquareLocation
+            }
+            else if boardDict[boardSquareLocation]?.piece.color == "black" && whiteTurn == false {
+                legalMoves = getLegalMoves(boardSquareLocation: boardSquareLocation)
+                showLegalMoves(arr: legalMoves)
+                boardSquareToMove = boardDict[boardSquareLocation]
+                originalCord = boardSquareLocation
+            }
+        }
+        else if let _ = boardSquareToMove {
+            if legalMoves.contains(boardSquareLocation) {
+                //updating boardDict
+                boardDict[boardSquareLocation] = boardSquareToMove
+                boardDict[originalCord] = nil
+                //clearing legalMoves
+                legalMoves = []
+                showLegalMoves(arr: legalMoves)
+                //resetting variables
+                boardSquareToMove = nil
+                
+                updateBoardView(buttons: buttonDict)
+            } else if boardDict[boardSquareLocation]?.piece.color == "white" {
+                legalMoves = []
+                legalMoves = getLegalMoves(boardSquareLocation: boardSquareLocation)
+                showLegalMoves(arr: legalMoves)
+            }
+        }
+    }
+    
+    func getLegalMoves(boardSquareLocation: String) -> Array<String> {//returns an array of legalMoves
         if let boardSquare = boardDict[boardSquareLocation] {//if there is a BoardSquare(a piece) at that coordinate, if not nothing happens
-            let letterCord = boardSquareLocation.prefix(1)
-            let numCord = boardSquareLocation.suffix(1)
-            let letterIndex = letters.firstIndex(of: String(letterCord))!
-            let numIndex = numbers.firstIndex(of: String(numCord))!
-            var legalMoves = Array<String>()
-            var i = 1
+        let letterCord = boardSquareLocation.prefix(1)
+        let numCord = boardSquareLocation.suffix(1)
+        let letterIndex = letters.firstIndex(of: String(letterCord))!
+        let numIndex = numbers.firstIndex(of: String(numCord))!
+        var i = 1
             
             if boardSquare.piece.pieceType == "pawn" {
                 if boardSquare.piece.color == "white" {
-                    legalMoves.append(letterCord+numbers[numIndex+1])//white pawn can move up 1 square
-                    if numCord == "2" {
-                        legalMoves.append(letterCord+"4")//if white pawn hasnt moved, it can move 2 squares
+                    if boardDict[letterCord+numbers[numIndex+1]] == nil {//if there is no piece
+                        legalMoves.append(letterCord+numbers[numIndex+1])//white pawn can move up 1 square
+                        if boardDict[letterCord+numbers[numIndex+2]] == nil {//if there is no piece
+                            if numCord == "2" {
+                                legalMoves.append(letterCord+"4")//if white pawn hasnt moved, it can move 2 squares
+                            }
+                        }
+                    }
+                    //white pawn can capture up right 1 square
+                    if letterIndex+1 <= 7 && numIndex+1 <= 7 {
+                        if boardDict[letters[letterIndex+1]+numbers[numIndex+1]] != nil {
+                            if boardDict[letters[letterIndex+1]+numbers[numIndex+1]]?.piece.color != boardSquare.piece.color {
+                                legalMoves.append(letters[letterIndex+1]+numbers[numIndex+1])
+                            }
+                        }
+                    }
+                    //white pawn can capture up left 1 square
+                    if letterIndex-1 >= 0 && numIndex+1 <= 7 {
+                        if boardDict[letters[letterIndex-1]+numbers[numIndex+1]] != nil {
+                            if boardDict[letters[letterIndex-1]+numbers[numIndex+1]]?.piece.color != boardSquare.piece.color {
+                                legalMoves.append(letters[letterIndex-1]+numbers[numIndex+1])
+                            }
+                        }
                     }
                 }
                 if boardSquare.piece.color == "black" {
-                    legalMoves.append(letterCord+numbers[numIndex-1])//black pawn can move down 1 square
-                    if numCord == "7" {
-                        legalMoves.append(letterCord+"5")//if black pawn hasnt moved, it can move 2 squares
+                    if boardDict[letterCord+numbers[numIndex-1]] == nil {//if there is no piece
+                        legalMoves.append(letterCord+numbers[numIndex-1])//black pawn can move down 1 square
+                        if numCord == "7" {
+                            if boardDict[letterCord+numbers[numIndex-2]] == nil {//if there is no piece
+                                legalMoves.append(letterCord+"5")//if black pawn hasnt moved, it can move 2 squares
+                            }
+                        }
+                    }
+                }
+                //black pawn can capture down right 1 square
+                if letterIndex+1 <= 7 && numIndex-1 >= 0{
+                    if boardDict[letters[letterIndex+1]+numbers[numIndex-1]] != nil {
+                        if boardDict[letters[letterIndex+1]+numbers[numIndex-1]]?.piece.color != boardSquare.piece.color {
+                            legalMoves.append(letters[letterIndex+1]+numbers[numIndex-1])
+                        }
+                    }
+                }
+                //black pawn can capture down left 1 square
+                if letterIndex-1 >= 0 && numIndex-1 >= 0 {
+                    if boardDict[letters[letterIndex-1]+numbers[numIndex-1]] != nil {
+                        if boardDict[letters[letterIndex-1]+numbers[numIndex-1]]?.piece.color != boardSquare.piece.color {
+                            legalMoves.append(letters[letterIndex-1]+numbers[numIndex-1])
+                        }
                     }
                 }
             }
@@ -374,8 +474,8 @@ class Board {
                     }
                 }
             }
-            showLegalMoves(arr: legalMoves)
         }
+        return legalMoves
     }
     func showLegalMoves(arr: Array<String>) {
         let legalMoves = arr

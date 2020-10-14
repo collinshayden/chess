@@ -11,8 +11,8 @@ import Cocoa
 let letters = Array<String>(arrayLiteral: "A","B","C","D","E","F","G","H")
 let numbers = Array<String>(arrayLiteral: "1","2","3","4","5","6","7","8")
 var buttonDict = [String:NSButton]()//dictionary for all the button variables
-var boardDict = [String:BoardSquare]()//dictionary that contains the piece type, color, and button at any coordinate
 var board = Board()
+
 
 class ViewController: NSViewController {
     @IBOutlet weak var ButtonA1: NSButton!
@@ -342,47 +342,12 @@ class ViewController: NSViewController {
         buttonDict["H7"] = ButtonH7
         buttonDict["H8"] = ButtonH8
         board.setBoardButtons(buttons: buttonDict)
-        
-        board.sendboardDict { [weak self] (dict: Dictionary<String,BoardSquare>) in
-              self?.setboardDict(dict: dict)//getting boardDict from the board class
-        }
-        updateBoardView(buttons: buttonDict)
+        board.updateBoardView(buttons: buttonDict)
         // Do any additional setup after loading the view.
     }
-    
-    func setboardDict(dict: Dictionary<String,BoardSquare>){
-        boardDict = dict
-    }
-
     override var representedObject: Any? {
         didSet {
         // Update the view, if already loaded.
-        }
-    }
-    //this displays the pieces on the view based on boardDict
-    func updateBoardView(buttons: Dictionary<String,NSButton>){
-        for l in letters {
-            for n in numbers {
-                let pieceColor = boardDict[l+n]?.piece.color
-                if (boardDict[l+n]?.piece.pieceType == "pawn"){
-                    buttons[l+n]!.image = NSImage(named: "pawn_" + pieceColor!)
-                }
-                if (boardDict[l+n]?.piece.pieceType == "rook"){
-                    buttons[l+n]!.image = NSImage(named: "rook_" + pieceColor!)
-                }
-                if (boardDict[l+n]?.piece.pieceType == "bishop"){
-                    buttons[l+n]!.image = NSImage(named: "bishop_" + pieceColor!)
-                }
-                if (boardDict[l+n]?.piece.pieceType == "knight"){
-                    buttons[l+n]!.image = NSImage(named: "knight_" + pieceColor!)
-                }
-                if (boardDict[l+n]?.piece.pieceType == "king"){
-                    buttons[l+n]!.image = NSImage(named: "king_" + pieceColor!)
-                }
-                if (boardDict[l+n]?.piece.pieceType == "queen"){
-                    buttons[l+n]!.image = NSImage(named: "queen_" + pieceColor!)
-                }
-            }
         }
     }
 }
