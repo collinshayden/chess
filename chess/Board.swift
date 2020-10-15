@@ -27,6 +27,8 @@ class Board {
         }
         //board setup
         //white
+        boardDict["E6"] = BoardSquare(piece: Piece(pieceType: "rook", color: "white"), button: buttons["E6"]!)
+
         for l in letters {
             boardDict[l+"2"] = BoardSquare(piece: Piece(pieceType: "pawn", color: "white"), button: buttons[l+"2"]!)
         }
@@ -105,11 +107,19 @@ class Board {
                 showLegalMoves(arr: legalMoves)
                 //resetting variables
                 boardSquareToMove = nil
+                if whiteTurn == true {
+                    whiteTurn = false
+                }
+                else {
+                    whiteTurn = true
+                }
                 
                 updateBoardView(buttons: buttonDict)
             } else if boardDict[boardSquareLocation]?.piece.color == "white" {
                 legalMoves = []
                 legalMoves = getLegalMoves(boardSquareLocation: boardSquareLocation)
+                boardSquareToMove = boardDict[boardSquareLocation]
+                originalCord = boardSquareLocation
                 showLegalMoves(arr: legalMoves)
             }
         }
