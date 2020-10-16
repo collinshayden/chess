@@ -11,11 +11,13 @@ import Foundation
 class Piece {
     let pieceType: String
     let color: String
+    let value: Int
+    var hasMoved: Bool
     
-    init(pieceType: String, color: String){
+    init(pieceType: String, color: String, value: Int, hasMoved: Bool){
         self.pieceType = pieceType
         self.color = color
-       
-        
+        self.value = value
+        self.hasMoved = hasMoved
     }
 }
