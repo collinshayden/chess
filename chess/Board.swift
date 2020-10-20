@@ -18,42 +18,6 @@ class Board {
     var originalCord : String!
     var castlingAvailable = false
     
-    func setBoardButtons(buttons: [String:NSButton]) {
-        self.buttons = buttons
-        //initializing all boardDict keys as nil
-        for l in letters {
-            for n in numbers {
-                boardDict[l+n] = nil
-            }
-        }
-        //board setup
-        //white
-        for l in letters {
-            boardDict[l+"2"] = BoardSquare(piece: Piece(pieceType: "pawn", color: "white", value: 1, hasMoved: false), button: buttons[l+"2"]!)
-        }
-        boardDict["A1"] = BoardSquare(piece: Piece(pieceType: "rook", color: "white", value: 5, hasMoved: false), button: buttons["A1"]!)
-        boardDict["H1"] = BoardSquare(piece: Piece(pieceType: "rook", color: "white", value: 5, hasMoved: false), button: buttons["H1"]!)
-        boardDict["B1"] = BoardSquare(piece: Piece(pieceType: "knight", color: "white", value: 3, hasMoved: false), button: buttons["B1"]!)
-        boardDict["G1"] = BoardSquare(piece: Piece(pieceType: "knight", color: "white", value: 3, hasMoved: false), button: buttons["G1"]!)
-        boardDict["C1"] = BoardSquare(piece: Piece(pieceType: "bishop", color: "white", value: 3, hasMoved: false), button: buttons["C1"]!)
-        boardDict["F1"] = BoardSquare(piece: Piece(pieceType: "bishop", color: "white", value: 3, hasMoved: false), button: buttons["F1"]!)
-        boardDict["E1"] = BoardSquare(piece: Piece(pieceType: "king", color: "white", value: 0, hasMoved: false), button: buttons["E1"]!)
-        boardDict["D1"] = BoardSquare(piece: Piece(pieceType: "queen", color: "white", value: 9, hasMoved: false), button: buttons["D1"]!)
-
-        //black
-        for l in letters {
-            boardDict[l+"7"] = BoardSquare(piece: Piece(pieceType: "pawn", color: "black", value: 1, hasMoved: false), button:buttons[l+"7"]!)
-        }
-        boardDict["A8"] = BoardSquare(piece: Piece(pieceType: "rook", color: "black", value: 5, hasMoved: false), button:buttons["A8"]!)
-        boardDict["H8"] = BoardSquare(piece: Piece(pieceType: "rook", color: "black", value: 5, hasMoved: false), button:buttons["H8"]!)
-        boardDict["B8"] = BoardSquare(piece: Piece(pieceType: "knight", color: "black", value: 3, hasMoved: false), button:buttons["B8"]!)
-        boardDict["G8"] = BoardSquare(piece: Piece(pieceType: "knight", color: "black", value: 3, hasMoved: false), button:buttons["G8"]!)
-        boardDict["C8"] = BoardSquare(piece: Piece(pieceType: "bishop", color: "black", value: 3, hasMoved: false), button:buttons["C8"]!)
-        boardDict["F8"] = BoardSquare(piece: Piece(pieceType: "bishop", color: "black", value: 3, hasMoved: false), button:buttons["F8"]!)
-        boardDict["E8"] = BoardSquare(piece: Piece(pieceType: "king", color: "black", value: 0, hasMoved: false), button:buttons["E8"]!)
-        boardDict["D8"] = BoardSquare(piece: Piece(pieceType: "queen", color: "black", value: 9, hasMoved: false), button:buttons["D8"]!)
-    }
-    
     //this displays the pieces on the view based on boardDict
     func updateBoardView(buttons: Dictionary<String,NSButton>){
         for l in letters {
@@ -78,6 +42,21 @@ class Board {
                     buttons[l+n]!.image = NSImage(named: "queen_" + pieceColor!)
                 }
             }
+        }
+    }
+    
+    func updateBoard(boardSquareLocation: String) {
+        //updating boardDict
+        boardDict[boardSquareLocation] = boardSquareToMove
+        boardDict[originalCord] = nil
+        boardSquareToMove?.piece.hasMoved = true
+        //clearing legal moves
+        legalMoves = []
+        showLegalMoves(arr: legalMoves)
+        //resetting selected piece to nil
+        boardSquareToMove = nil
+        if promotionAvailable() == true {
+            promoteToQueen(boardSquareLocation: boardSquareLocation)
         }
     }
     
@@ -124,16 +103,8 @@ class Board {
                 if castlingAvailable == true {//if castling is a legal move
                     performCastle(boardSquareLocation: boardSquareLocation)
                 }
-                //updating boardDict
-                boardDict[boardSquareLocation] = boardSquareToMove
-                boardSquareToMove?.piece.hasMoved = true
-                boardDict[originalCord] = nil
-                //clearing legalMoves
-                legalMoves = []
-                showLegalMoves(arr: legalMoves)
-                //resetting variables
-                boardSquareToMove = nil
                 if whiteTurn == true {whiteTurn = false} else {whiteTurn = true}//flips turns
+                updateBoard(boardSquareLocation: boardSquareLocation)
                 updateBoardView(buttons: buttonDict)
             }
             //if it is white's turn and white clicks on another white piece
@@ -167,8 +138,8 @@ class Board {
                 if boardSquare.piece.color == "white" {
                     if boardDict[letterCord+numbers[numIndex+1]] == nil {//if there is no piece
                         legalMoves.append(letterCord+numbers[numIndex+1])//white pawn can move up 1 square
-                        if boardDict[letterCord+numbers[numIndex+2]] == nil {//if there is no piece
-                            if boardSquare.piece.hasMoved == false {
+                        if boardSquare.piece.hasMoved == false {
+                            if boardDict[letterCord+numbers[numIndex+2]] == nil {//if there is no piece
                                 legalMoves.append(letterCord+numbers[numIndex+2])//if white pawn hasnt moved, it can move 2 squares
                             }
                         }
@@ -193,30 +164,31 @@ class Board {
                 if boardSquare.piece.color == "black" {
                     if boardDict[letterCord+numbers[numIndex-1]] == nil {//if there is no piece
                         legalMoves.append(letterCord+numbers[numIndex-1])//black pawn can move down 1 square
+                        if boardSquare.piece.hasMoved == false {
                             if boardDict[letterCord+numbers[numIndex-2]] == nil {//if there is no piece
-                                if boardSquare.piece.hasMoved == false {
                                 legalMoves.append(letterCord+numbers[numIndex-2])//if black pawn hasnt moved, it can move 2 squares
                             }
                         }
                     }
-                }
-                //black pawn can capture down right 1 square
-                if letterIndex+1 <= 7 && numIndex-1 >= 0{
-                    if boardDict[letters[letterIndex+1]+numbers[numIndex-1]] != nil {
-                        if boardDict[letters[letterIndex+1]+numbers[numIndex-1]]?.piece.color != boardSquare.piece.color {
-                            legalMoves.append(letters[letterIndex+1]+numbers[numIndex-1])
+                    //black pawn can capture down right 1 square
+                    if letterIndex+1 <= 7 && numIndex-1 >= 0{
+                        if boardDict[letters[letterIndex+1]+numbers[numIndex-1]] != nil {
+                            if boardDict[letters[letterIndex+1]+numbers[numIndex-1]]?.piece.color != boardSquare.piece.color {
+                                legalMoves.append(letters[letterIndex+1]+numbers[numIndex-1])
+                            }
                         }
                     }
-                }
-                //black pawn can capture down left 1 square
-                if letterIndex-1 >= 0 && numIndex-1 >= 0 {
-                    if boardDict[letters[letterIndex-1]+numbers[numIndex-1]] != nil {
-                        if boardDict[letters[letterIndex-1]+numbers[numIndex-1]]?.piece.color != boardSquare.piece.color {
-                            legalMoves.append(letters[letterIndex-1]+numbers[numIndex-1])
+                    //black pawn can capture down left 1 square
+                    if letterIndex-1 >= 0 && numIndex-1 >= 0 {
+                        if boardDict[letters[letterIndex-1]+numbers[numIndex-1]] != nil {
+                            if boardDict[letters[letterIndex-1]+numbers[numIndex-1]]?.piece.color != boardSquare.piece.color {
+                                legalMoves.append(letters[letterIndex-1]+numbers[numIndex-1])
+                            }
                         }
                     }
                 }
             }
+            
             if boardSquare.piece.pieceType == "rook" {
                 //left
                 i = 1
@@ -546,6 +518,44 @@ class Board {
         return legalMoves
     }
     
+    func setBoardButtons(buttons: [String:NSButton]) {
+        self.buttons = buttons
+        //initializing all boardDict keys as nil
+        for l in letters {
+            for n in numbers {
+                boardDict[l+n] = nil
+            }
+        }
+        //board setup
+        //white
+        boardDict["E3"] = BoardSquare(piece: Piece(pieceType: "pawn", color: "black", value: 5, hasMoved: false), button: buttons["E3"]!)
+
+        for l in letters {
+            boardDict[l+"2"] = BoardSquare(piece: Piece(pieceType: "pawn", color: "white", value: 1, hasMoved: false), button: buttons[l+"2"]!)
+        }
+        boardDict["A1"] = BoardSquare(piece: Piece(pieceType: "rook", color: "white", value: 5, hasMoved: false), button: buttons["A1"]!)
+        boardDict["H1"] = BoardSquare(piece: Piece(pieceType: "rook", color: "white", value: 5, hasMoved: false), button: buttons["H1"]!)
+        boardDict["B1"] = BoardSquare(piece: Piece(pieceType: "knight", color: "white", value: 3, hasMoved: false), button: buttons["B1"]!)
+        boardDict["G1"] = BoardSquare(piece: Piece(pieceType: "knight", color: "white", value: 3, hasMoved: false), button: buttons["G1"]!)
+        boardDict["C1"] = BoardSquare(piece: Piece(pieceType: "bishop", color: "white", value: 3, hasMoved: false), button: buttons["C1"]!)
+        boardDict["F1"] = BoardSquare(piece: Piece(pieceType: "bishop", color: "white", value: 3, hasMoved: false), button: buttons["F1"]!)
+        boardDict["E1"] = BoardSquare(piece: Piece(pieceType: "king", color: "white", value: 0, hasMoved: false), button: buttons["E1"]!)
+        boardDict["D1"] = BoardSquare(piece: Piece(pieceType: "queen", color: "white", value: 9, hasMoved: false), button: buttons["D1"]!)
+
+        //black
+        for l in letters {
+            boardDict[l+"7"] = BoardSquare(piece: Piece(pieceType: "pawn", color: "black", value: 1, hasMoved: false), button:buttons[l+"7"]!)
+        }
+        boardDict["A8"] = BoardSquare(piece: Piece(pieceType: "rook", color: "black", value: 5, hasMoved: false), button:buttons["A8"]!)
+        boardDict["H8"] = BoardSquare(piece: Piece(pieceType: "rook", color: "black", value: 5, hasMoved: false), button:buttons["H8"]!)
+        boardDict["B8"] = BoardSquare(piece: Piece(pieceType: "knight", color: "black", value: 3, hasMoved: false), button:buttons["B8"]!)
+        boardDict["G8"] = BoardSquare(piece: Piece(pieceType: "knight", color: "black", value: 3, hasMoved: false), button:buttons["G8"]!)
+        boardDict["C8"] = BoardSquare(piece: Piece(pieceType: "bishop", color: "black", value: 3, hasMoved: false), button:buttons["C8"]!)
+        boardDict["F8"] = BoardSquare(piece: Piece(pieceType: "bishop", color: "black", value: 3, hasMoved: false), button:buttons["F8"]!)
+        boardDict["E8"] = BoardSquare(piece: Piece(pieceType: "king", color: "black", value: 0, hasMoved: false), button:buttons["E8"]!)
+        boardDict["D8"] = BoardSquare(piece: Piece(pieceType: "queen", color: "black", value: 9, hasMoved: false), button:buttons["D8"]!)
+    }
+    
     func performCastle(boardSquareLocation: String) {
         if boardSquareLocation == "G1" {//white kingside
             boardDict[boardSquareLocation] = boardSquareToMove
@@ -584,4 +594,25 @@ class Board {
             castlingAvailable = false
         }
     }
+    func promotionAvailable() -> Bool {
+        for l in letters {
+            if boardDict[l+"8"]?.piece.pieceType == "pawn" {
+                return true
+            }
+            if boardDict[l+"1"]?.piece.pieceType == "pawn" {
+                return true
+            }
+        }
+        return false
+    }
+    
+    func promoteToQueen(boardSquareLocation: String){
+        if boardDict[boardSquareLocation]?.piece.color == "white" {
+            boardDict[boardSquareLocation] = BoardSquare(piece: Piece(pieceType: "queen", color: "white", value: 9, hasMoved: true), button: buttons[boardSquareLocation]!)
+        }
+        else {
+            boardDict[boardSquareLocation] = BoardSquare(piece: Piece(pieceType: "queen", color: "black", value: 9, hasMoved: true), button: buttons[boardSquareLocation]!)
+        }
+    }
 }
+
