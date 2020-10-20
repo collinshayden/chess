@@ -17,6 +17,8 @@ class Board {
     var boardSquareToMove : BoardSquare?
     var originalCord : String!
     var castlingAvailable = false
+    var globalWhiteScore : NSTextField!
+    var globalBlackScore : NSTextField!
     
     //this displays the pieces on the view based on boardDict
     func updateBoardView(buttons: Dictionary<String,NSButton>){
@@ -43,6 +45,7 @@ class Board {
                 }
             }
         }
+        showMaterialValue(globalWhiteScore: globalWhiteScore, globalBlackScore: globalBlackScore)
     }
     
     func updateBoard(boardSquareLocation: String) {
@@ -65,9 +68,11 @@ class Board {
         //resets the display of legal moves for every click of a piece
         for l in letters {
             for n in numbers {
+                //if theres no piece on a square, sets the image to nil
                 if boardDict[l+n] == nil {
                     buttons[l+n]?.image = nil
                 }
+                //if there is a piece on a square, sets the image to the respective piece image
                 if boardDict[l+n] != nil {
                     buttons[l+n]?.image = NSImage(named: (boardDict[l+n]?.piece.pieceType)! + "_" + (boardDict[l+n]?.piece.color)!)
                 }
@@ -528,7 +533,6 @@ class Board {
         }
         //board setup
         //white
-        boardDict["E3"] = BoardSquare(piece: Piece(pieceType: "pawn", color: "black", value: 5, hasMoved: false), button: buttons["E3"]!)
 
         for l in letters {
             boardDict[l+"2"] = BoardSquare(piece: Piece(pieceType: "pawn", color: "white", value: 1, hasMoved: false), button: buttons[l+"2"]!)
@@ -614,5 +618,28 @@ class Board {
             boardDict[boardSquareLocation] = BoardSquare(piece: Piece(pieceType: "queen", color: "black", value: 9, hasMoved: true), button: buttons[boardSquareLocation]!)
         }
     }
+    
+    func setScoreVariables(localWhiteScore: NSTextField, localBlackScore: NSTextField) {
+        globalWhiteScore = localWhiteScore
+        globalBlackScore = localBlackScore
+    }
+    
+    func showMaterialValue(globalWhiteScore: NSTextField, globalBlackScore: NSTextField) {
+        var whiteMaterialValue = 0
+        var blackMaterialValue = 0
+        for l in letters {
+            for n in numbers {
+                if boardDict[l+n]?.piece.color == "white" {
+                    whiteMaterialValue += (boardDict[l+n]?.piece.value)!
+                }
+                else if boardDict[l+n]?.piece.color == "black" {
+                    blackMaterialValue += (boardDict[l+n]?.piece.value)!
+                }
+            }
+        }
+        globalWhiteScore.stringValue = String(whiteMaterialValue-blackMaterialValue)
+        globalBlackScore.stringValue = String(blackMaterialValue-whiteMaterialValue)
+    }
 }
+
 

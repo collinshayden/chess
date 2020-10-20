@@ -80,6 +80,11 @@ class ViewController: NSViewController {
     @IBOutlet weak var ButtonH7: NSButton!
     @IBOutlet weak var ButtonH8: NSButton!
     
+    //Score
+    @IBOutlet weak var whiteScore: NSTextField!
+    @IBOutlet weak var blackScore: NSTextField!
+    
+    
     //functions for when a button is pressed
     @IBAction func ButtonActionA1(_ sender: Any) {
         board.boardSquareClicked(boardSquareLocation: "A1")
@@ -342,6 +347,7 @@ class ViewController: NSViewController {
         buttonDict["H7"] = ButtonH7
         buttonDict["H8"] = ButtonH8
         board.setBoardButtons(buttons: buttonDict)
+        board.setScoreVariables(localWhiteScore: whiteScore, localBlackScore: blackScore)
         board.updateBoardView(buttons: buttonDict)
         // Do any additional setup after loading the view.
     }
