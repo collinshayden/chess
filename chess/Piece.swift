@@ -13,11 +13,13 @@ class Piece {
     let color: String
     let value: Int
     var hasMoved: Bool
+    var pieceLegalMoves: Array<String>
     
-    init(pieceType: String, color: String, value: Int, hasMoved: Bool){
+    init(pieceType: String, color: String, value: Int, hasMoved: Bool, pieceLegalMoves: Array<String>){
         self.pieceType = pieceType
         self.color = color
         self.value = value
         self.hasMoved = hasMoved
+        self.pieceLegalMoves = pieceLegalMoves
     }
 }
