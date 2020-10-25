@@ -55,12 +55,13 @@ class Board {
         boardDict[boardSquareLocation] = boardSquareToMove
         boardDict[originalCord] = nil
         boardSquareToMove?.piece.hasMoved = true
-        //clearing legal moves
-        legalMoves = []
-        showLegalMoves(arr: legalMoves)
         
         //saves the legal moves of next turn for the moved piece
         boardDict[boardSquareLocation]?.piece.pieceLegalMoves = getLegalMoves(boardSquareLocation: boardSquareLocation)
+        
+        //clearing legal moves
+        legalMoves = []
+        showLegalMoves(arr: legalMoves)
         
         if promotionAvailable() == true {
             promoteToQueen(boardSquareLocation: boardSquareLocation)
@@ -72,8 +73,7 @@ class Board {
         if boardSquareToMove?.piece.pieceType == "king" && boardSquareToMove?.piece.color == "black" {
             blackKingLocation = boardSquareLocation
         }
-        //resetting selected piece to nil
-        boardSquareToMove = nil
+        boardSquareToMove = nil//resetting selected piece to nil
     }
     
     func showLegalMoves(arr: Array<String>) {
@@ -105,16 +105,10 @@ class Board {
     func boardSquareClicked(boardSquareLocation: String) {//when a button is clicked
         if boardSquareToMove == nil{//if a new piece is selected
             if boardDict[boardSquareLocation]?.piece.color == "white" && whiteTurn == true {
-                legalMoves = getLegalMoves(boardSquareLocation: boardSquareLocation)
-                showLegalMoves(arr: legalMoves)
-                boardSquareToMove = boardDict[boardSquareLocation]
-                originalCord = boardSquareLocation
+                selectPiece(boardSquareLocation: boardSquareLocation)
             }
             else if boardDict[boardSquareLocation]?.piece.color == "black" && whiteTurn == false {
-                legalMoves = getLegalMoves(boardSquareLocation: boardSquareLocation)
-                showLegalMoves(arr: legalMoves)
-                boardSquareToMove = boardDict[boardSquareLocation]
-                originalCord = boardSquareLocation
+                selectPiece(boardSquareLocation: boardSquareLocation)
             }
         }
         else if let _ = boardSquareToMove {
@@ -122,28 +116,28 @@ class Board {
                 if castlingAvailable == true {//if castling is a legal move
                     performCastle(boardSquareLocation: boardSquareLocation)//castle
                 }
-                if whiteTurn == true {whiteTurn = false} else {whiteTurn = true}//flips turns
                 updateBoard(boardSquareLocation: boardSquareLocation)//moves pieces, clears legalmoves, checks for promotion
                 updateBoardView(buttons: buttonDict)//updates images
                 checkforCheck(whiteKingLocation: whiteKingLocation, blackKingLocation: blackKingLocation)
+                if whiteTurn == true {whiteTurn = false} else {whiteTurn = true}//flips turns
             }
             //if it is white's turn and white clicks on another white piece
             else if boardDict[boardSquareLocation]?.piece.color == "white" && whiteTurn == true {
-                legalMoves = []//clears legal moves
-                legalMoves = getLegalMoves(boardSquareLocation: boardSquareLocation)//reassigns the legal moves of selected piece
-                boardSquareToMove = boardDict[boardSquareLocation]//sets the selected piece to the new piece
-                originalCord = boardSquareLocation
-                showLegalMoves(arr: legalMoves)
+                selectPiece(boardSquareLocation: boardSquareLocation)
             }
             //if it is black's turn and black clicks on another black piece
             else if boardDict[boardSquareLocation]?.piece.color == "black" && whiteTurn == false {
-                legalMoves = []
-                legalMoves = getLegalMoves(boardSquareLocation: boardSquareLocation)
-                boardSquareToMove = boardDict[boardSquareLocation]
-                originalCord = boardSquareLocation
-                showLegalMoves(arr: legalMoves)
+                selectPiece(boardSquareLocation: boardSquareLocation)
             }
         }
+    }
+    
+    func selectPiece(boardSquareLocation: String) {
+        legalMoves = []//clears legal moves
+        legalMoves = getLegalMoves(boardSquareLocation: boardSquareLocation)//reassigns the legal moves of selected piece
+        boardSquareToMove = boardDict[boardSquareLocation]//sets the selected piece to the new piece
+        originalCord = boardSquareLocation//saves the current coordinate of the piece
+        showLegalMoves(arr: legalMoves)
     }
     
     func getLegalMoves(boardSquareLocation: String) -> Array<String> {//returns an array of legalMoves
@@ -495,8 +489,10 @@ class Board {
                                     legalMoves.append(letters[letterIndex+i] + numbers[numIndex + j])
                                 }
                             }
-                            else {
-                                legalMoves.append(letters[letterIndex+i] + numbers[numIndex + j])//if there is no piece, it is a legal move
+                            else {//if there is no piece on the square
+                                if computeKingAttackers(kingLocation: letters[letterIndex+i] + numbers[numIndex + j]) == false {//and if this square is not attacked by a piece
+                                    legalMoves.append(letters[letterIndex+i] + numbers[numIndex + j])//it is a legal move
+                                }
                             }
                         }
                     }
@@ -656,19 +652,28 @@ class Board {
     
     //if there is a piece on any horizontal, vertical, or diagonal that can attack the king, calls the check function
     func checkforCheck(whiteKingLocation: String, blackKingLocation: String) {
-        
-        //white
-        var letterCord = whiteKingLocation.prefix(1)
-        var numCord = whiteKingLocation.suffix(1)
-        var letterIndex = letters.firstIndex(of: String(letterCord))!
-        var numIndex = numbers.firstIndex(of: String(numCord))!
+        if computeKingAttackers(kingLocation: whiteKingLocation) == true {
+            whiteInCheck(whiteKingLocation: whiteKingLocation)
+        }
+        if computeKingAttackers(kingLocation: blackKingLocation) == true {
+            blackInCheck(blackKingLocation: blackKingLocation)
+        }
+    }
+    
+    func computeKingAttackers(kingLocation: String) -> Bool{
+        //this function finds if there is a piece on any horizontal, vertical, or diagonal that has kingLocation in piece.pieceLegalMoves
+        let letterCord = kingLocation.prefix(1)
+        let numCord = kingLocation.suffix(1)
+        let letterIndex = letters.firstIndex(of: String(letterCord))!
+        let numIndex = numbers.firstIndex(of: String(numCord))!
         var i = 1
+        
         //left
         i = 1
         while letterIndex-i >= 0 {
             if boardDict[letters[letterIndex-i]+numCord]?.piece != nil {
-                if ((boardDict[letters[letterIndex-i]+numCord]?.piece.pieceLegalMoves.contains(whiteKingLocation)) == true) {
-                    whiteInCheck(whiteKingLocation: whiteKingLocation)
+                if ((boardDict[letters[letterIndex-i]+numCord]?.piece.pieceLegalMoves.contains(kingLocation)) == true) {
+                    return true
                 }
             }
             i += 1
@@ -677,8 +682,8 @@ class Board {
         i = 1
         while letterIndex+i <= 7 {
             if boardDict[letters[letterIndex+i]+numCord]?.piece != nil {
-                if ((boardDict[letters[letterIndex+i]+numCord]?.piece.pieceLegalMoves.contains(whiteKingLocation)) == true) {
-                    whiteInCheck(whiteKingLocation: whiteKingLocation)
+                if ((boardDict[letters[letterIndex+i]+numCord]?.piece.pieceLegalMoves.contains(kingLocation)) == true) {
+                    return true
                 }
             }
             i += 1
@@ -687,8 +692,8 @@ class Board {
         i = 1
         while numIndex+i <= 7 {
             if boardDict[letterCord+numbers[numIndex+i]]?.piece != nil {
-                if ((boardDict[letterCord+numbers[numIndex+i]]?.piece.pieceLegalMoves.contains(whiteKingLocation)) == true) {
-                    whiteInCheck(whiteKingLocation: whiteKingLocation)
+                if ((boardDict[letterCord+numbers[numIndex+i]]?.piece.pieceLegalMoves.contains(kingLocation)) == true) {
+                    return true
                 }
             }
             i += 1
@@ -697,8 +702,8 @@ class Board {
         i = 1
         while numIndex-i >= 0 {
             if boardDict[letterCord+numbers[numIndex-i]]?.piece != nil {
-                if ((boardDict[letterCord+numbers[numIndex-i]]?.piece.pieceLegalMoves.contains(whiteKingLocation)) == true) {
-                    whiteInCheck(whiteKingLocation: whiteKingLocation)
+                if ((boardDict[letterCord+numbers[numIndex-i]]?.piece.pieceLegalMoves.contains(kingLocation)) == true) {
+                    return true
                 }
             }
             i += 1
@@ -707,8 +712,8 @@ class Board {
         i = 1
         while letterIndex+i <= 7 && numIndex+i <= 7{
             if boardDict[letters[letterIndex+i]+numbers[numIndex+i]]?.piece != nil {
-                if ((boardDict[letters[letterIndex+i]+numbers[numIndex+i]]?.piece.pieceLegalMoves.contains(whiteKingLocation)) == true) {
-                    whiteInCheck(whiteKingLocation: whiteKingLocation)
+                if ((boardDict[letters[letterIndex+i]+numbers[numIndex+i]]?.piece.pieceLegalMoves.contains(kingLocation)) == true) {
+                    return true
                 }
             }
             i += 1
@@ -717,8 +722,8 @@ class Board {
         i = 1
         while letterIndex-i >= 0 && numIndex-i >= 0{
             if boardDict[letters[letterIndex-i]+numbers[numIndex-i]]?.piece != nil {
-                if ((boardDict[letters[letterIndex-i]+numbers[numIndex-i]]?.piece.pieceLegalMoves.contains(whiteKingLocation)) == true) {
-                    whiteInCheck(whiteKingLocation: whiteKingLocation)
+                if ((boardDict[letters[letterIndex-i]+numbers[numIndex-i]]?.piece.pieceLegalMoves.contains(kingLocation)) == true) {
+                    return true
                 }
             }
             i += 1
@@ -727,8 +732,8 @@ class Board {
         i = 1
         while letterIndex+i <= 7 && numIndex-i >= 0{
             if boardDict[letters[letterIndex+i]+numbers[numIndex-i]]?.piece != nil {
-                if ((boardDict[letters[letterIndex+i]+numbers[numIndex-i]]?.piece.pieceLegalMoves.contains(whiteKingLocation)) == true) {
-                    whiteInCheck(whiteKingLocation: whiteKingLocation)
+                if ((boardDict[letters[letterIndex+i]+numbers[numIndex-i]]?.piece.pieceLegalMoves.contains(kingLocation)) == true) {
+                    return true
                 }
             }
             i += 1
@@ -737,97 +742,13 @@ class Board {
         i = 1
         while letterIndex-i >= 0 && numIndex+i <= 7{
             if boardDict[letters[letterIndex-i]+numbers[numIndex+i]]?.piece != nil {
-                if ((boardDict[letters[letterIndex-i]+numbers[numIndex+i]]?.piece.pieceLegalMoves.contains(whiteKingLocation)) == true) {
-                    whiteInCheck(whiteKingLocation: whiteKingLocation)
+                if ((boardDict[letters[letterIndex-i]+numbers[numIndex+i]]?.piece.pieceLegalMoves.contains(kingLocation)) == true) {
+                    return true
                 }
             }
             i += 1
         }
-        //black
-        letterCord = blackKingLocation.prefix(1)
-        numCord = blackKingLocation.suffix(1)
-        letterIndex = letters.firstIndex(of: String(letterCord))!
-        numIndex = numbers.firstIndex(of: String(numCord))!
-        //left
-        i = 1
-        while letterIndex-i >= 0 {
-            if boardDict[letters[letterIndex-i]+numCord]?.piece != nil {
-                if ((boardDict[letters[letterIndex-i]+numCord]?.piece.pieceLegalMoves.contains(blackKingLocation)) == true) {
-                    blackInCheck(blackKingLocation: blackKingLocation)
-                }
-            }
-            i += 1
-        }
-        //right
-        i = 1
-        while letterIndex+i <= 7 {
-            if boardDict[letters[letterIndex+i]+numCord]?.piece != nil {
-                if ((boardDict[letters[letterIndex+i]+numCord]?.piece.pieceLegalMoves.contains(blackKingLocation)) == true) {
-                    blackInCheck(blackKingLocation: blackKingLocation)
-                }
-            }
-            i += 1
-        }
-        //up
-        i = 1
-        while numIndex+i <= 7 {
-            if boardDict[letterCord+numbers[numIndex+i]]?.piece != nil {
-                if ((boardDict[letterCord+numbers[numIndex+i]]?.piece.pieceLegalMoves.contains(blackKingLocation)) == true) {
-                    blackInCheck(blackKingLocation: blackKingLocation)
-                }
-            }
-            i += 1
-        }
-        //down
-        i = 1
-        while numIndex-i >= 0 {
-            if boardDict[letterCord+numbers[numIndex-i]]?.piece != nil {
-                if ((boardDict[letterCord+numbers[numIndex-i]]?.piece.pieceLegalMoves.contains(blackKingLocation)) == true) {
-                    blackInCheck(blackKingLocation: blackKingLocation)
-                }
-            }
-            i += 1
-        }
-        //up right diagonal
-        i = 1
-        while letterIndex+i <= 7 && numIndex+i <= 7{
-            if boardDict[letters[letterIndex+i]+numbers[numIndex+i]]?.piece != nil {
-                if ((boardDict[letters[letterIndex+i]+numbers[numIndex+i]]?.piece.pieceLegalMoves.contains(blackKingLocation)) == true) {
-                    blackInCheck(blackKingLocation: blackKingLocation)
-                }
-            }
-            i += 1
-        }
-        //down left diagonal
-        i = 1
-        while letterIndex-i >= 0 && numIndex-i >= 0{
-            if boardDict[letters[letterIndex-i]+numbers[numIndex-i]]?.piece != nil {
-                if ((boardDict[letters[letterIndex-i]+numbers[numIndex-i]]?.piece.pieceLegalMoves.contains(blackKingLocation)) == true) {
-                    blackInCheck(blackKingLocation: blackKingLocation)
-                }
-            }
-            i += 1
-        }
-        //down right diagonal
-        i = 1
-        while letterIndex+i <= 7 && numIndex-i >= 0{
-            if boardDict[letters[letterIndex+i]+numbers[numIndex-i]]?.piece != nil {
-                if ((boardDict[letters[letterIndex+i]+numbers[numIndex-i]]?.piece.pieceLegalMoves.contains(blackKingLocation)) == true) {
-                    blackInCheck(blackKingLocation: blackKingLocation)
-                }
-            }
-            i += 1
-        }
-        //up left diagonal
-        i = 1
-        while letterIndex-i >= 0 && numIndex+i <= 7{
-            if boardDict[letters[letterIndex-i]+numbers[numIndex+i]]?.piece != nil {
-                if ((boardDict[letters[letterIndex-i]+numbers[numIndex+i]]?.piece.pieceLegalMoves.contains(blackKingLocation)) == true) {
-                    blackInCheck(blackKingLocation: blackKingLocation)
-                }
-            }
-            i += 1
-        }
+        return false
     }
     
     func whiteInCheck(whiteKingLocation: String) {
