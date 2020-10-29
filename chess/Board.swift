@@ -10,7 +10,6 @@ import Cocoa
 
 class Board {
     var boardDict = [String:BoardSquare]()
-    var dict = [String:BoardSquare]()
     var buttons = [String:NSButton]()
     var legalMoves = Array<String>()
     var whiteTurn = true
@@ -21,6 +20,9 @@ class Board {
     var globalBlackScore : NSTextField!
     var whiteKingLocation = "E1"
     var blackKingLocation = "E8"
+    var whiteTotalMoves = Array<String>()
+    var blackTotalMoves = Array<String>()
+    
     
     //this displays the pieces on the view based on boardDict
     func updateBoardView(buttons: Dictionary<String,NSButton>){
@@ -74,6 +76,12 @@ class Board {
             blackKingLocation = boardSquareLocation
         }
         boardSquareToMove = nil//resetting selected piece to nil
+        if whiteTurn == true {
+            whiteTotalMoves = legalMovesOfColor(color: "white")
+            whiteTurn = false}//sets whites totalMoves and flips turns
+        else {
+            blackTotalMoves = legalMovesOfColor(color: "black")
+            whiteTurn = true}//sets blacks totalMoves and flips turns
     }
     
     func showLegalMoves(arr: Array<String>) {
@@ -119,7 +127,6 @@ class Board {
                 updateBoard(boardSquareLocation: boardSquareLocation)//moves pieces, clears legalmoves, checks for promotion
                 updateBoardView(buttons: buttonDict)//updates images
                 checkforCheck(whiteKingLocation: whiteKingLocation, blackKingLocation: blackKingLocation)
-                if whiteTurn == true {whiteTurn = false} else {whiteTurn = true}//flips turns
             }
             //if it is white's turn and white clicks on another white piece
             else if boardDict[boardSquareLocation]?.piece.color == "white" && whiteTurn == true {
@@ -135,6 +142,7 @@ class Board {
     func selectPiece(boardSquareLocation: String) {
         legalMoves = []//clears legal moves
         legalMoves = getLegalMoves(boardSquareLocation: boardSquareLocation)//reassigns the legal moves of selected piece
+        legalMoves = forcedToPreventCheck(whiteKingLocation: whiteKingLocation, blackKingLocation: blackKingLocation, pieceLocation: boardSquareLocation, legalMoves: legalMoves, whiteTurn: whiteTurn)
         boardSquareToMove = boardDict[boardSquareLocation]//sets the selected piece to the new piece
         originalCord = boardSquareLocation//saves the current coordinate of the piece
         showLegalMoves(arr: legalMoves)
@@ -142,12 +150,13 @@ class Board {
     
     func getLegalMoves(boardSquareLocation: String) -> Array<String> {//returns an array of legalMoves
         if let boardSquare = boardDict[boardSquareLocation] {//if there is a BoardSquare(a piece) at that coordinate, if not nothing happens
-        let letterCord = boardSquareLocation.prefix(1)
-        let numCord = boardSquareLocation.suffix(1)
-        let letterIndex = letters.firstIndex(of: String(letterCord))!
-        let numIndex = numbers.firstIndex(of: String(numCord))!
-        var i = 1
-            
+            let letterCord = boardSquareLocation.prefix(1)
+            let numCord = boardSquareLocation.suffix(1)
+            let letterIndex = letters.firstIndex(of: String(letterCord))!
+            let numIndex = numbers.firstIndex(of: String(numCord))!
+            var i = 1
+            legalMoves = []
+                
             if boardSquare.piece.pieceType == "pawn" {
                 if boardSquare.piece.color == "white" {
                     if boardDict[letterCord+numbers[numIndex+1]] == nil {//if there is no piece
@@ -490,9 +499,7 @@ class Board {
                                 }
                             }
                             else {//if there is no piece on the square
-                                if computeKingAttackers(kingLocation: letters[letterIndex+i] + numbers[numIndex + j]) == false {//and if this square is not attacked by a piece
-                                    legalMoves.append(letters[letterIndex+i] + numbers[numIndex + j])//it is a legal move
-                                }
+                                legalMoves.append(letters[letterIndex+i] + numbers[numIndex + j])//it is a legal move
                             }
                         }
                     }
@@ -650,112 +657,94 @@ class Board {
         globalBlackScore.stringValue = String(blackMaterialValue-whiteMaterialValue)
     }
     
-    //if there is a piece on any horizontal, vertical, or diagonal that can attack the king, calls the check function
-    func checkforCheck(whiteKingLocation: String, blackKingLocation: String) {
-        if computeKingAttackers(kingLocation: whiteKingLocation) == true {
-            whiteInCheck(whiteKingLocation: whiteKingLocation)
+    func legalMovesOfColor(color: String) -> Array<String>{
+        var totalLegalMoves = Array<String>()
+        for l in letters {
+            for n in numbers {
+                if boardDict[l+n]?.piece.color == color {
+                    totalLegalMoves.append(contentsOf: getLegalMoves(boardSquareLocation: l+n))
+                }
+            }
         }
-        if computeKingAttackers(kingLocation: blackKingLocation) == true {
-            blackInCheck(blackKingLocation: blackKingLocation)
-        }
+        return totalLegalMoves
     }
     
-    func computeKingAttackers(kingLocation: String) -> Bool{
-        //this function finds if there is a piece on any horizontal, vertical, or diagonal that has kingLocation in piece.pieceLegalMoves
-        let letterCord = kingLocation.prefix(1)
-        let numCord = kingLocation.suffix(1)
-        let letterIndex = letters.firstIndex(of: String(letterCord))!
-        let numIndex = numbers.firstIndex(of: String(numCord))!
-        var i = 1
+    //simulates the move of a piece, to see if it would put or keep the king in check
+    func checkLegalMove(kingLocation: String, pieceLocation: String, newLocation: String, whiteTurn: Bool) -> Bool{
+        let orgPieceLocation = boardDict[pieceLocation]
+        let orgNewLocation = boardDict[newLocation]
+        var kingLocation = kingLocation
         
-        //left
-        i = 1
-        while letterIndex-i >= 0 {
-            if boardDict[letters[letterIndex-i]+numCord]?.piece != nil {
-                if ((boardDict[letters[letterIndex-i]+numCord]?.piece.pieceLegalMoves.contains(kingLocation)) == true) {
-                    return true
-                }
-            }
-            i += 1
+        if pieceLocation == kingLocation {
+            kingLocation = newLocation
         }
-        //right
-        i = 1
-        while letterIndex+i <= 7 {
-            if boardDict[letters[letterIndex+i]+numCord]?.piece != nil {
-                if ((boardDict[letters[letterIndex+i]+numCord]?.piece.pieceLegalMoves.contains(kingLocation)) == true) {
-                    return true
-                }
+        boardDict[newLocation] = boardDict[pieceLocation]
+        boardDict[pieceLocation] = nil
+        
+        if whiteTurn == true {//white
+            blackTotalMoves = legalMovesOfColor(color: "black")
+            if blackTotalMoves.contains(kingLocation) == true {//if white is in check
+                boardDict[pieceLocation] = orgPieceLocation//reset the pieces
+                boardDict[newLocation] = orgNewLocation
+                return false//it is not a legal move
             }
-            i += 1
         }
-        //up
-        i = 1
-        while numIndex+i <= 7 {
-            if boardDict[letterCord+numbers[numIndex+i]]?.piece != nil {
-                if ((boardDict[letterCord+numbers[numIndex+i]]?.piece.pieceLegalMoves.contains(kingLocation)) == true) {
-                    return true
-                }
+        if whiteTurn == false {//black
+            whiteTotalMoves = legalMovesOfColor(color: "white")
+            if whiteTotalMoves.contains(kingLocation) == true {//if black is in check
+                boardDict[pieceLocation] = orgPieceLocation
+                boardDict[newLocation] = orgNewLocation
+                return false
             }
-            i += 1
         }
-        //down
-        i = 1
-        while numIndex-i >= 0 {
-            if boardDict[letterCord+numbers[numIndex-i]]?.piece != nil {
-                if ((boardDict[letterCord+numbers[numIndex-i]]?.piece.pieceLegalMoves.contains(kingLocation)) == true) {
-                    return true
-                }
-            }
-            i += 1
-        }
-        //up right diagonal
-        i = 1
-        while letterIndex+i <= 7 && numIndex+i <= 7{
-            if boardDict[letters[letterIndex+i]+numbers[numIndex+i]]?.piece != nil {
-                if ((boardDict[letters[letterIndex+i]+numbers[numIndex+i]]?.piece.pieceLegalMoves.contains(kingLocation)) == true) {
-                    return true
-                }
-            }
-            i += 1
-        }
-        //down left diagonal
-        i = 1
-        while letterIndex-i >= 0 && numIndex-i >= 0{
-            if boardDict[letters[letterIndex-i]+numbers[numIndex-i]]?.piece != nil {
-                if ((boardDict[letters[letterIndex-i]+numbers[numIndex-i]]?.piece.pieceLegalMoves.contains(kingLocation)) == true) {
-                    return true
-                }
-            }
-            i += 1
-        }
-        //down right diagonal
-        i = 1
-        while letterIndex+i <= 7 && numIndex-i >= 0{
-            if boardDict[letters[letterIndex+i]+numbers[numIndex-i]]?.piece != nil {
-                if ((boardDict[letters[letterIndex+i]+numbers[numIndex-i]]?.piece.pieceLegalMoves.contains(kingLocation)) == true) {
-                    return true
-                }
-            }
-            i += 1
-        }
-        //up left diagonal
-        i = 1
-        while letterIndex-i >= 0 && numIndex+i <= 7{
-            if boardDict[letters[letterIndex-i]+numbers[numIndex+i]]?.piece != nil {
-                if ((boardDict[letters[letterIndex-i]+numbers[numIndex+i]]?.piece.pieceLegalMoves.contains(kingLocation)) == true) {
-                    return true
-                }
-            }
-            i += 1
-        }
-        return false
+        boardDict[pieceLocation] = orgPieceLocation
+        boardDict[newLocation] = orgNewLocation
+        return true//if the move does not put the king in check, it is legal
     }
     
-    func whiteInCheck(whiteKingLocation: String) {
-        buttons[whiteKingLocation]!.image = NSImage(named: "king_white_check")
+    func forcedToPreventCheck(whiteKingLocation: String, blackKingLocation: String, pieceLocation: String, legalMoves: Array<String>, whiteTurn: Bool) -> Array<String> {
+        var tempLegalMoves = legalMoves
+        
+        for index in stride(from: legalMoves.count-1, to: -1, by: -1) {
+            if whiteTurn == true {
+                if checkLegalMove(kingLocation: whiteKingLocation, pieceLocation: pieceLocation, newLocation: legalMoves[index], whiteTurn: whiteTurn) == false {
+                    tempLegalMoves.remove(at: index)
+                }
+            }
+            else if whiteTurn == false {
+                if checkLegalMove(kingLocation: blackKingLocation, pieceLocation: pieceLocation, newLocation: legalMoves[index], whiteTurn: whiteTurn) == false {
+                    tempLegalMoves.remove(at: index)
+                }
+            }
+        }
+        return tempLegalMoves
     }
     
-    func blackInCheck(blackKingLocation: String) {
-        buttons[blackKingLocation]!.image = NSImage(named: "king_black_check")
+    //if there is a piece on any horizontal, vertical, or diagonal that can attack a king, calls the inCheck() function
+    func checkforCheck(whiteKingLocation: String, blackKingLocation: String) {
+        if whiteTurn == true {
+            if legalMovesOfColor(color: "black").contains(whiteKingLocation) {
+                inCheck(kingLocation: whiteKingLocation, color: "white")
+            }
+        }
+        if whiteTurn == false {
+            if legalMovesOfColor(color: "white").contains(blackKingLocation) {
+                inCheck(kingLocation: blackKingLocation, color: "black")
+            }
+        }
+    }
+    
+    func inCheck(kingLocation: String, color: String) {
+        buttons[kingLocation]!.image = NSImage(named: "king_" + color + "_check")
+        
+    }
+    func checkMate() {
+        if legalMovesOfColor(color: "white").isEmpty {
+            
+        }
+        if legalMovesOfColor(color: "black").isEmpty {
+            
+        }
     }
 }
+    
