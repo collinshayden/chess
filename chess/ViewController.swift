@@ -11,6 +11,8 @@ import Cocoa
 let letters = Array<String>(arrayLiteral: "A","B","C","D","E","F","G","H")
 let numbers = Array<String>(arrayLiteral: "1","2","3","4","5","6","7","8")
 var buttonDict = [String:NSButton]()//dictionary for all the button variables
+var whiteScoreArr = Array<NSImageView>()
+var blackScoreArr = Array<NSImageView>()
 var board = Board()
 
 
@@ -86,6 +88,31 @@ class ViewController: NSViewController {
     @IBOutlet weak var MoveCount: NSTextField!
     @IBOutlet weak var checkMateText: NSTextField!
     
+    //Score ImageView Variables
+    @IBOutlet weak var whiteScoreIndex0: NSImageView!
+    @IBOutlet weak var whiteScoreIndex1: NSImageView!
+    @IBOutlet weak var whiteScoreIndex2: NSImageView!
+    @IBOutlet weak var whiteScoreIndex3: NSImageView!
+    @IBOutlet weak var whiteScoreIndex4: NSImageView!
+    @IBOutlet weak var whiteScoreIndex5: NSImageView!
+    @IBOutlet weak var whiteScoreIndex6: NSImageView!
+    @IBOutlet weak var whiteScoreIndex7: NSImageView!
+    @IBOutlet weak var whiteScoreIndex8: NSImageView!
+    @IBOutlet weak var whiteScoreIndex9: NSImageView!
+    @IBOutlet weak var whiteScoreIndex10: NSImageView!
+    @IBOutlet weak var whiteScoreIndex11: NSImageView!
+    @IBOutlet weak var blackScoreIndex0: NSImageView!
+    @IBOutlet weak var blackScoreIndex1: NSImageView!
+    @IBOutlet weak var blackScoreIndex2: NSImageView!
+    @IBOutlet weak var blackScoreIndex3: NSImageView!
+    @IBOutlet weak var blackScoreIndex4: NSImageView!
+    @IBOutlet weak var blackScoreIndex5: NSImageView!
+    @IBOutlet weak var blackScoreIndex6: NSImageView!
+    @IBOutlet weak var blackScoreIndex7: NSImageView!
+    @IBOutlet weak var blackScoreIndex8: NSImageView!
+    @IBOutlet weak var blackScoreIndex9: NSImageView!
+    @IBOutlet weak var blackScoreIndex10: NSImageView!
+    @IBOutlet weak var blackScoreIndex11: NSImageView!
     
     //functions for when a button is pressed
     @IBAction func ButtonActionA1(_ sender: Any) {
@@ -348,8 +375,34 @@ class ViewController: NSViewController {
         buttonDict["H6"] = ButtonH6
         buttonDict["H7"] = ButtonH7
         buttonDict["H8"] = ButtonH8
+        
+        whiteScoreArr.append(whiteScoreIndex0)
+        whiteScoreArr.append(whiteScoreIndex1)
+        whiteScoreArr.append(whiteScoreIndex2)
+        whiteScoreArr.append(whiteScoreIndex3)
+        whiteScoreArr.append(whiteScoreIndex4)
+        whiteScoreArr.append(whiteScoreIndex5)
+        whiteScoreArr.append(whiteScoreIndex6)
+        whiteScoreArr.append(whiteScoreIndex7)
+        whiteScoreArr.append(whiteScoreIndex8)
+        whiteScoreArr.append(whiteScoreIndex9)
+        whiteScoreArr.append(whiteScoreIndex10)
+        whiteScoreArr.append(whiteScoreIndex11)
+        blackScoreArr.append(blackScoreIndex0)
+        blackScoreArr.append(blackScoreIndex1)
+        blackScoreArr.append(blackScoreIndex2)
+        blackScoreArr.append(blackScoreIndex3)
+        blackScoreArr.append(blackScoreIndex4)
+        blackScoreArr.append(blackScoreIndex5)
+        blackScoreArr.append(blackScoreIndex6)
+        blackScoreArr.append(blackScoreIndex7)
+        blackScoreArr.append(blackScoreIndex8)
+        blackScoreArr.append(blackScoreIndex9)
+        blackScoreArr.append(blackScoreIndex10)
+        blackScoreArr.append(blackScoreIndex11)
+        
         board.setBoardButtons(buttons: buttonDict)
-        board.setTextFieldVariables(localWhiteScore: whiteScore, localBlackScore: blackScore, localMoveCount: MoveCount, localCheckMateText: checkMateText)
+        board.setGlobalVariables(localWhiteScore: whiteScore, localBlackScore: blackScore, localMoveCount: MoveCount, localCheckMateText: checkMateText, localWhiteScoreArr: whiteScoreArr, localBlackScoreArr: blackScoreArr)
         board.updateBoardView(buttons: buttonDict)
         // Do any additional setup after loading the view.
     }

@@ -20,6 +20,10 @@ class Board {
     var globalBlackScore : NSTextField!
     var globalMoveCount : NSTextField!
     var globalCheckMateText : NSTextField!
+    var globalWhiteScoreArr : Array<NSImageView>!
+    var globalBlackScoreArr : Array<NSImageView>!
+    var capturedWhitePieces = Array<BoardSquare>()
+    var capturedBlackPieces = Array<BoardSquare>()
     var moveCount = 1
     var whiteKingLocation = "E1"
     var blackKingLocation = "E8"
@@ -57,6 +61,10 @@ class Board {
     
     func updateBoard(boardSquareLocation: String) {
         //updating boardDict
+        if boardDict[boardSquareLocation] != nil {//if it is capturing a piece, add the boardSquare to respective capturedPiecesArray
+            if boardDict[boardSquareLocation]?.piece.color == "white" {capturedWhitePieces.append(boardDict[boardSquareLocation]!)}
+            else {capturedBlackPieces.append(boardDict[boardSquareLocation]!)}
+        }
         boardDict[boardSquareLocation] = boardSquareToMove
         boardDict[originalCord] = nil
         boardSquareToMove?.piece.hasMoved = true
@@ -161,14 +169,17 @@ class Board {
                 
             if boardSquare.piece.pieceType == "pawn" {
                 if boardSquare.piece.color == "white" {
-                    if boardDict[letterCord+numbers[numIndex+1]] == nil {//if there is no piece
-                        legalMoves.append(letterCord+numbers[numIndex+1])//white pawn can move up 1 square
+                    if numIndex+1 <= 7 {
+                        if boardDict[letterCord+numbers[numIndex+1]] == nil {//if there is no piece
+                            legalMoves.append(letterCord+numbers[numIndex+1])//white pawn can move up 1 square
+                    }
                         if boardSquare.piece.hasMoved == false {
                             if boardDict[letterCord+numbers[numIndex+2]] == nil {//if there is no piece
                                 legalMoves.append(letterCord+numbers[numIndex+2])//if white pawn hasnt moved, it can move 2 squares
                             }
                         }
                     }
+
                     //white pawn can capture up right 1 square
                     if letterIndex+1 <= 7 && numIndex+1 <= 7 {
                         if boardDict[letters[letterIndex+1]+numbers[numIndex+1]] != nil {
@@ -187,8 +198,10 @@ class Board {
                     }
                 }
                 if boardSquare.piece.color == "black" {
-                    if boardDict[letterCord+numbers[numIndex-1]] == nil {//if there is no piece
-                        legalMoves.append(letterCord+numbers[numIndex-1])//black pawn can move down 1 square
+                    if numIndex-1 >= 0 {
+                        if boardDict[letterCord+numbers[numIndex-1]] == nil {//if there is no piece
+                            legalMoves.append(letterCord+numbers[numIndex-1])//black pawn can move down 1 square
+                    }
                         if boardSquare.piece.hasMoved == false {
                             if boardDict[letterCord+numbers[numIndex-2]] == nil {//if there is no piece
                                 legalMoves.append(letterCord+numbers[numIndex-2])//if black pawn hasnt moved, it can move 2 squares
@@ -638,11 +651,13 @@ class Board {
         }
     }
     
-    func setTextFieldVariables(localWhiteScore: NSTextField, localBlackScore: NSTextField, localMoveCount: NSTextField, localCheckMateText: NSTextField) {
+    func setGlobalVariables(localWhiteScore: NSTextField, localBlackScore: NSTextField, localMoveCount: NSTextField, localCheckMateText: NSTextField, localWhiteScoreArr: Array<NSImageView>, localBlackScoreArr: Array<NSImageView>) {
         globalWhiteScore = localWhiteScore
         globalBlackScore = localBlackScore
         globalMoveCount = localMoveCount
         globalCheckMateText = localCheckMateText
+        globalWhiteScoreArr = localWhiteScoreArr
+        globalBlackScoreArr = localBlackScoreArr
     }
     
     func showMaterialValue(globalWhiteScore: NSTextField, globalBlackScore: NSTextField) {
@@ -660,6 +675,35 @@ class Board {
         }
         globalWhiteScore.stringValue = String(whiteMaterialValue-blackMaterialValue)
         globalBlackScore.stringValue = String(blackMaterialValue-whiteMaterialValue)
+        
+        //ordering the arrays
+        if capturedWhitePieces.count > 1 {
+            for index in stride(from: capturedWhitePieces.count-1, to: 0, by: -1) {
+                if capturedWhitePieces[index].piece.value > capturedWhitePieces[index-1].piece.value {
+                    capturedWhitePieces.insert(capturedWhitePieces[index], at: index-1)
+                    capturedWhitePieces.remove(at: index+1)
+                }
+            }
+        }
+        if capturedBlackPieces.count > 1 {
+            for index in stride(from: capturedBlackPieces.count-1, to: 0, by: -1) {
+                if capturedBlackPieces[index].piece.value > capturedBlackPieces[index-1].piece.value {
+                    capturedBlackPieces.insert(capturedBlackPieces[index], at: index-1)
+                    capturedBlackPieces.remove(at: index+1)
+                }
+            }
+        }
+        //displaying the piece images
+        if capturedWhitePieces.count > 0 {
+            for index in 0...capturedWhitePieces.count-1 {
+                globalBlackScoreArr[index].image = NSImage(named: capturedWhitePieces[index].piece.pieceType + "_white")
+            }
+        }
+        if capturedBlackPieces.count > 0 {
+            for index in 0...capturedBlackPieces.count-1 {
+                globalWhiteScoreArr[index].image = NSImage(named: capturedBlackPieces[index].piece.pieceType + "_black")
+            }
+        }
     }
     
     func showMoveCount() {
