@@ -1650,6 +1650,24 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rNl-4r-V22">
+                                <rect key="frame" x="153" y="30" width="173" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Move: " id="SO0-er-ZXE">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="feh-wg-h7L">
+                                <rect key="frame" x="150" y="6" width="179" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" id="if9-6W-W0V">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                     </view>
                     <connections>
@@ -1718,7 +1736,9 @@
                         <outlet property="ButtonH7" destination="CzC-bC-nMJ" id="9k5-Fd-ulL"/>
                         <outlet property="ButtonH8" destination="uNc-1y-H6g" id="7ek-1F-WeB"/>
                         <outlet property="D8" destination="IMC-u8-8bC" id="Y4m-iX-a0g"/>
+                        <outlet property="MoveCount" destination="rNl-4r-V22" id="oED-wU-jts"/>
                         <outlet property="blackScore" destination="sdr-rf-Ebu" id="yPN-ug-MeX"/>
+                        <outlet property="checkMateText" destination="feh-wg-h7L" id="HTd-fa-hsc"/>
                         <outlet property="whiteScore" destination="qZe-km-UwX" id="nJC-cI-JQa"/>
                     </connections>
                 </viewController>

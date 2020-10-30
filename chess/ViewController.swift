@@ -80,9 +80,11 @@ class ViewController: NSViewController {
     @IBOutlet weak var ButtonH7: NSButton!
     @IBOutlet weak var ButtonH8: NSButton!
     
-    //Score
+    //Text Field Variables
     @IBOutlet weak var whiteScore: NSTextField!
     @IBOutlet weak var blackScore: NSTextField!
+    @IBOutlet weak var MoveCount: NSTextField!
+    @IBOutlet weak var checkMateText: NSTextField!
     
     
     //functions for when a button is pressed
@@ -347,7 +349,7 @@ class ViewController: NSViewController {
         buttonDict["H7"] = ButtonH7
         buttonDict["H8"] = ButtonH8
         board.setBoardButtons(buttons: buttonDict)
-        board.setScoreVariables(localWhiteScore: whiteScore, localBlackScore: blackScore)
+        board.setTextFieldVariables(localWhiteScore: whiteScore, localBlackScore: blackScore, localMoveCount: MoveCount, localCheckMateText: checkMateText)
         board.updateBoardView(buttons: buttonDict)
         // Do any additional setup after loading the view.
     }
