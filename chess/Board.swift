@@ -22,8 +22,8 @@ class Board {
     var globalCheckMateText : NSTextField!
     var globalWhiteScoreArr : Array<NSImageView>!
     var globalBlackScoreArr : Array<NSImageView>!
-    var capturedWhitePieces = Array<BoardSquare>()
-    var capturedBlackPieces = Array<BoardSquare>()
+    var capturedWhitePieces = Array<Piece>()
+    var capturedBlackPieces = Array<Piece>()
     var moveCount = 1
     var whiteKingLocation = "E1"
     var blackKingLocation = "E8"
@@ -60,11 +60,8 @@ class Board {
     }
     
     func updateBoard(boardSquareLocation: String) {
+        updateMaterialValue(boardSquareLocation: boardSquareLocation)
         //updating boardDict
-        if boardDict[boardSquareLocation] != nil {//if it is capturing a piece, add the boardSquare to respective capturedPiecesArray
-            if boardDict[boardSquareLocation]?.piece.color == "white" {capturedWhitePieces.append(boardDict[boardSquareLocation]!)}
-            else {capturedBlackPieces.append(boardDict[boardSquareLocation]!)}
-        }
         boardDict[boardSquareLocation] = boardSquareToMove
         boardDict[originalCord] = nil
         boardSquareToMove?.piece.hasMoved = true
@@ -660,6 +657,36 @@ class Board {
         globalBlackScoreArr = localBlackScoreArr
     }
     
+    func updateMaterialValue(boardSquareLocation: String) {
+        if boardDict[boardSquareLocation] != nil { //if it is capturing a piece, add the boardSquare to respective capturedPiecesArray
+            if boardDict[boardSquareLocation]?.piece.color == "white" {
+                capturedWhitePieces.append(boardDict[boardSquareLocation]!.piece)
+                if capturedBlackPieces.count > 0 {
+                    for index in stride(from: capturedBlackPieces.count-1, to: -1, by: -1) {
+                        if capturedBlackPieces[index].pieceType == boardDict[boardSquareLocation]?.piece.pieceType {
+                            //if this pieceType is already in the oppposite capturedPieces array, both can be removed because it is even material
+                            capturedBlackPieces.remove(at: index)
+                            capturedWhitePieces.removeLast()
+                            break
+                        }
+                    }
+                }
+            }
+            if boardDict[boardSquareLocation]?.piece.color == "black" {
+                capturedBlackPieces.append(boardDict[boardSquareLocation]!.piece)
+                if capturedWhitePieces.count > 0 {
+                    for index in stride(from: capturedWhitePieces.count-1, to: -1, by: -1) {
+                        if capturedWhitePieces[index].pieceType == boardDict[boardSquareLocation]?.piece.pieceType {
+                            capturedWhitePieces.remove(at: index)
+                            capturedBlackPieces.removeLast()
+                            break
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     func showMaterialValue(globalWhiteScore: NSTextField, globalBlackScore: NSTextField) {
         var whiteMaterialValue = 0
         var blackMaterialValue = 0
@@ -679,7 +706,7 @@ class Board {
         //ordering the arrays
         if capturedWhitePieces.count > 1 {
             for index in stride(from: capturedWhitePieces.count-1, to: 0, by: -1) {
-                if capturedWhitePieces[index].piece.value > capturedWhitePieces[index-1].piece.value {
+                if capturedWhitePieces[index].value > capturedWhitePieces[index-1].value {
                     capturedWhitePieces.insert(capturedWhitePieces[index], at: index-1)
                     capturedWhitePieces.remove(at: index+1)
                 }
@@ -687,21 +714,28 @@ class Board {
         }
         if capturedBlackPieces.count > 1 {
             for index in stride(from: capturedBlackPieces.count-1, to: 0, by: -1) {
-                if capturedBlackPieces[index].piece.value > capturedBlackPieces[index-1].piece.value {
+                if capturedBlackPieces[index].value > capturedBlackPieces[index-1].value {
                     capturedBlackPieces.insert(capturedBlackPieces[index], at: index-1)
                     capturedBlackPieces.remove(at: index+1)
                 }
             }
         }
+        //clearing the piece images
+        for imageView in globalWhiteScoreArr {
+            imageView.image = nil
+        }
+        for imageView in globalBlackScoreArr {
+            imageView.image = nil
+        }
         //displaying the piece images
         if capturedWhitePieces.count > 0 {
             for index in 0...capturedWhitePieces.count-1 {
-                globalBlackScoreArr[index].image = NSImage(named: capturedWhitePieces[index].piece.pieceType + "_white")
+                globalBlackScoreArr[index].image = NSImage(named: capturedWhitePieces[index].pieceType + "_white")
             }
         }
         if capturedBlackPieces.count > 0 {
             for index in 0...capturedBlackPieces.count-1 {
-                globalWhiteScoreArr[index].image = NSImage(named: capturedBlackPieces[index].piece.pieceType + "_black")
+                globalWhiteScoreArr[index].image = NSImage(named: capturedBlackPieces[index].pieceType + "_black")
             }
         }
     }

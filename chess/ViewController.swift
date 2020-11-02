@@ -307,6 +307,9 @@ class ViewController: NSViewController {
     @IBAction func ButtonActionH8(_ sender: Any) {
         board.boardSquareClicked(boardSquareLocation: "H8")
     }
+    @IBAction func resetButton(_ sender: Any) {
+        board = Board()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
