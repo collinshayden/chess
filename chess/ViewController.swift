@@ -307,9 +307,7 @@ class ViewController: NSViewController {
     @IBAction func ButtonActionH8(_ sender: Any) {
         board.boardSquareClicked(boardSquareLocation: "H8")
     }
-    @IBAction func resetButton(_ sender: Any) {
-        board = Board()
-    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -408,6 +406,13 @@ class ViewController: NSViewController {
         board.setGlobalVariables(localWhiteScore: whiteScore, localBlackScore: blackScore, localMoveCount: MoveCount, localCheckMateText: checkMateText, localwhiteScoreImageViews: whiteScoreImageViews, localblackScoreImageViews: blackScoreImageViews)
         board.updateBoardView(buttons: buttonDict)
         // Do any additional setup after loading the view.
+    }
+    @IBAction func resetButton(_ sender: Any) {
+        board = Board()
+        board.setBoardButtons(buttons: buttonDict)
+        board.setGlobalVariables(localWhiteScore: whiteScore, localBlackScore: blackScore, localMoveCount: MoveCount, localCheckMateText: checkMateText, localwhiteScoreImageViews: whiteScoreImageViews, localblackScoreImageViews: blackScoreImageViews)
+        board.showMoveCount()
+        board.updateBoardView(buttons: buttonDict)
     }
     override var representedObject: Any? {
         didSet {

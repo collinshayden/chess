@@ -54,6 +54,9 @@ class Board {
                 if (boardDict[l+n]?.piece.pieceType == "queen"){
                     buttons[l+n]!.image = NSImage(named: "queen_" + pieceColor!)
                 }
+                if (boardDict[l+n] == nil) {
+                    buttons[l+n]?.image = nil
+                }
             }
         }
         showMaterialValue(globalWhiteScore: globalWhiteScore, globalBlackScore: globalBlackScore)
@@ -655,6 +658,7 @@ class Board {
         globalCheckMateText = localCheckMateText
         globalwhiteScoreImageViews = localwhiteScoreImageViews
         globalblackScoreImageViews = localblackScoreImageViews
+        moveCount = 1
     }
     
     func updateMaterialValue(boardSquareLocation: String) {
