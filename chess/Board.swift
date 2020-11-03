@@ -29,6 +29,7 @@ class Board {
     var blackKingLocation = "E8"
     var whiteTotalMoves = Array<String>()
     var blackTotalMoves = Array<String>()
+    var recordedMovesArray = Array<Array<String>>()
     
     
     //this displays the pieces on the view based on boardDict
@@ -64,6 +65,7 @@ class Board {
     
     func updateBoard(boardSquareLocation: String) {
         updateMaterialValue(boardSquareLocation: boardSquareLocation)
+        recordMoves(originalPosition: originalCord, newPosition: boardSquareLocation)
         //updating boardDict
         boardDict[boardSquareLocation] = boardSquareToMove
         boardDict[originalCord] = nil
@@ -880,6 +882,18 @@ class Board {
         }
         if updatedLegalMovesOfColor(color: "black").isEmpty {
             globalCheckMateText.stringValue = "White wins by checkmate" 
+        }
+    }
+    
+    func recordMoves(originalPosition: String, newPosition: String) {
+            recordedMovesArray.append([originalPosition, newPosition])
+    }
+    func getMovesFromMove(moveNum: Int, color: String) -> Array<String>{
+        if color == "white" {
+            return recordedMovesArray[(moveNum*2)-2]
+        }
+        else {
+            return recordedMovesArray[((moveNum+1)*2)-3]
         }
     }
 }
