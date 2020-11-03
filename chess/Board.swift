@@ -20,8 +20,8 @@ class Board {
     var globalBlackScore : NSTextField!
     var globalMoveCount : NSTextField!
     var globalCheckMateText : NSTextField!
-    var globalWhiteScoreArr : Array<NSImageView>!
-    var globalBlackScoreArr : Array<NSImageView>!
+    var globalwhiteScoreImageViews : Array<NSImageView>!
+    var globalblackScoreImageViews : Array<NSImageView>!
     var capturedWhitePieces = Array<Piece>()
     var capturedBlackPieces = Array<Piece>()
     var moveCount = 1
@@ -648,13 +648,13 @@ class Board {
         }
     }
     
-    func setGlobalVariables(localWhiteScore: NSTextField, localBlackScore: NSTextField, localMoveCount: NSTextField, localCheckMateText: NSTextField, localWhiteScoreArr: Array<NSImageView>, localBlackScoreArr: Array<NSImageView>) {
+    func setGlobalVariables(localWhiteScore: NSTextField, localBlackScore: NSTextField, localMoveCount: NSTextField, localCheckMateText: NSTextField, localwhiteScoreImageViews: Array<NSImageView>, localblackScoreImageViews: Array<NSImageView>) {
         globalWhiteScore = localWhiteScore
         globalBlackScore = localBlackScore
         globalMoveCount = localMoveCount
         globalCheckMateText = localCheckMateText
-        globalWhiteScoreArr = localWhiteScoreArr
-        globalBlackScoreArr = localBlackScoreArr
+        globalwhiteScoreImageViews = localwhiteScoreImageViews
+        globalblackScoreImageViews = localblackScoreImageViews
     }
     
     func updateMaterialValue(boardSquareLocation: String) {
@@ -700,8 +700,23 @@ class Board {
                 }
             }
         }
-        globalWhiteScore.stringValue = String(whiteMaterialValue-blackMaterialValue)
-        globalBlackScore.stringValue = String(blackMaterialValue-whiteMaterialValue)
+        let whiteNumScore = whiteMaterialValue-blackMaterialValue
+        let blackNumScore = blackMaterialValue-whiteMaterialValue
+        
+        if whiteNumScore > 0 {
+            globalWhiteScore.stringValue = "+" + String(whiteNumScore)
+            globalWhiteScore.setFrameOrigin(NSPoint(x:46 + (capturedBlackPieces.count * 20), y: 115))
+        }
+        else {
+            globalWhiteScore.stringValue = " "
+        }
+        if blackNumScore > 0 {
+            globalBlackScore.stringValue = "+" + String(blackNumScore)
+            globalBlackScore.setFrameOrigin(NSPoint(x:46 + (capturedWhitePieces.count * 20), y: 89))
+        }
+        else {
+            globalBlackScore.stringValue = " "
+        }
         
         //ordering the arrays
         if capturedWhitePieces.count > 1 {
@@ -721,21 +736,21 @@ class Board {
             }
         }
         //clearing the piece images
-        for imageView in globalWhiteScoreArr {
+        for imageView in globalwhiteScoreImageViews {
             imageView.image = nil
         }
-        for imageView in globalBlackScoreArr {
+        for imageView in globalblackScoreImageViews {
             imageView.image = nil
         }
         //displaying the piece images
         if capturedWhitePieces.count > 0 {
             for index in 0...capturedWhitePieces.count-1 {
-                globalBlackScoreArr[index].image = NSImage(named: capturedWhitePieces[index].pieceType + "_white")
+                globalblackScoreImageViews[index].image = NSImage(named: capturedWhitePieces[index].pieceType + "_white")
             }
         }
         if capturedBlackPieces.count > 0 {
             for index in 0...capturedBlackPieces.count-1 {
-                globalWhiteScoreArr[index].image = NSImage(named: capturedBlackPieces[index].pieceType + "_black")
+                globalwhiteScoreImageViews[index].image = NSImage(named: capturedBlackPieces[index].pieceType + "_black")
             }
         }
     }
