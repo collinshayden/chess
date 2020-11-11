@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A108D920255AF69800EC1A9A /* Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = A108D91F255AF69800EC1A9A /* Move.swift */; };
 		A1851571252234FB008E6B8A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1851570252234FB008E6B8A /* AppDelegate.swift */; };
 		A1851573252234FB008E6B8A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1851572252234FB008E6B8A /* ViewController.swift */; };
 		A1851575252234FC008E6B8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1851574252234FC008E6B8A /* Assets.xcassets */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A108D91F255AF69800EC1A9A /* Move.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Move.swift; sourceTree = "<group>"; };
 		A185156D252234FB008E6B8A /* chess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = chess.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1851570252234FB008E6B8A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1851572252234FB008E6B8A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 				A1B00C9B252B627E00815126 /* BoardSquare.swift */,
 				A1F69FA02523859C00C6AEC9 /* Piece.swift */,
 				A1F69F9E2523849800C6AEC9 /* Board.swift */,
+				A108D91F255AF69800EC1A9A /* Move.swift */,
 				A1851574252234FC008E6B8A /* Assets.xcassets */,
 				A1851576252234FC008E6B8A /* Main.storyboard */,
 				A1851579252234FC008E6B8A /* Info.plist */,
@@ -146,6 +149,7 @@
 				A1851573252234FB008E6B8A /* ViewController.swift in Sources */,
 				A1851571252234FB008E6B8A /* AppDelegate.swift in Sources */,
 				A1F69F9F2523849800C6AEC9 /* Board.swift in Sources */,
+				A108D920255AF69800EC1A9A /* Move.swift in Sources */,
 				A1B00C9C252B627E00815126 /* BoardSquare.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

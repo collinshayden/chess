@@ -13,6 +13,10 @@ let numbers = Array<String>(arrayLiteral: "1","2","3","4","5","6","7","8")
 var buttonDict = [String:NSButton]()//dictionary for all the button variables
 var whiteScoreImageViews = Array<NSImageView>()
 var blackScoreImageViews = Array<NSImageView>()
+var moveColumnArr = Array<NSTextField>()
+var whiteColumnArr = Array<NSTextField>()
+var blackColumnArr = Array<NSTextField>()
+
 var board = Board()
 
 
@@ -114,7 +118,9 @@ class ViewController: NSViewController {
     @IBOutlet weak var blackScoreIndex10: NSImageView!
     @IBOutlet weak var blackScoreIndex11: NSImageView!
     
-    //functions for when a button is pressed
+    @IBOutlet weak var tableView: NSTableView!
+    
+    //function calls for when a button is pressed
     @IBAction func ButtonActionA1(_ sender: Any) {
         board.boardSquareClicked(boardSquareLocation: "A1")
     }
@@ -389,6 +395,7 @@ class ViewController: NSViewController {
         whiteScoreImageViews.append(whiteScoreIndex9)
         whiteScoreImageViews.append(whiteScoreIndex10)
         whiteScoreImageViews.append(whiteScoreIndex11)
+        
         blackScoreImageViews.append(blackScoreIndex0)
         blackScoreImageViews.append(blackScoreIndex1)
         blackScoreImageViews.append(blackScoreIndex2)
@@ -402,15 +409,19 @@ class ViewController: NSViewController {
         blackScoreImageViews.append(blackScoreIndex10)
         blackScoreImageViews.append(blackScoreIndex11)
         
-        board.setBoardButtons(buttons: buttonDict)
-        board.setGlobalVariables(localWhiteScore: whiteScore, localBlackScore: blackScore, localMoveCount: MoveCount, localCheckMateText: checkMateText, localwhiteScoreImageViews: whiteScoreImageViews, localblackScoreImageViews: blackScoreImageViews)
+        //Set Table View Delegate
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        board.setBoardDict(buttons: buttonDict)
+        board.setGlobalVariables(localWhiteScore: whiteScore, localBlackScore: blackScore, localMoveCount: MoveCount, localCheckMateText: checkMateText, localwhiteScoreImageViews: whiteScoreImageViews, localblackScoreImageViews: blackScoreImageViews, localtableView: tableView)
         board.updateBoardView(buttons: buttonDict)
         // Do any additional setup after loading the view.
     }
     @IBAction func resetButton(_ sender: Any) {
         board = Board()
-        board.setBoardButtons(buttons: buttonDict)
-        board.setGlobalVariables(localWhiteScore: whiteScore, localBlackScore: blackScore, localMoveCount: MoveCount, localCheckMateText: checkMateText, localwhiteScoreImageViews: whiteScoreImageViews, localblackScoreImageViews: blackScoreImageViews)
+        board.setBoardDict(buttons: buttonDict)
+        board.setGlobalVariables(localWhiteScore: whiteScore, localBlackScore: blackScore, localMoveCount: MoveCount, localCheckMateText: checkMateText, localwhiteScoreImageViews: whiteScoreImageViews, localblackScoreImageViews: blackScoreImageViews, localtableView: tableView)
         board.showMoveCount()
         board.updateBoardView(buttons: buttonDict)
     }
@@ -419,4 +430,42 @@ class ViewController: NSViewController {
         // Update the view, if already loaded.
         }
     }
+}
+extension ViewController: NSTableViewDataSource {
+  
+  func numberOfRows(in tableView: NSTableView) -> Int {
+    return board.movesArr.count
+  }
+}
+
+extension ViewController: NSTableViewDelegate {
+
+  fileprivate enum CellIdentifiers {
+    static let moveCell = "moveCellID"
+    static let whiteCell = "whiteCellID"
+    static let blackCell = "blackCellID"
+  }
+
+  func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+    var text: String = ""
+    var cellIdentifier: String = ""
+    
+    //setting the text varialbe for each column
+    if tableColumn == tableView.tableColumns[0] {
+      text = String(row+1)
+      cellIdentifier = CellIdentifiers.moveCell
+    } else if tableColumn == tableView.tableColumns[1] {
+        text = board.movesArr[row].getWhiteMove()
+        cellIdentifier = CellIdentifiers.whiteCell
+    } else if tableColumn == tableView.tableColumns[2] {
+        text = board.movesArr[row].getBlackMove()
+        cellIdentifier = CellIdentifiers.blackCell
+    }
+    //setting the stringValue for each cell in column
+    if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: cellIdentifier), owner: nil) as? NSTableCellView {
+      cell.textField?.stringValue = text
+      return cell
+    }
+    return nil
+  }
 }
