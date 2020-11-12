@@ -819,6 +819,7 @@ class Board {
             if blackTotalLegalMoves.contains(kingLocation) == true {//if white is in check
                 boardDict[pieceLocation] = orgPieceLocation//reset the pieces
                 boardDict[newLocation] = orgNewLocation
+                blackTotalLegalMoves = legalMovesOfColor(color: "black")
                 return false//it is not a legal move
             }
         }
@@ -827,11 +828,14 @@ class Board {
             if whiteTotalLegalMoves.contains(kingLocation) == true {//if black is in check
                 boardDict[pieceLocation] = orgPieceLocation
                 boardDict[newLocation] = orgNewLocation
+                whiteTotalLegalMoves = legalMovesOfColor(color: "white")
                 return false
             }
         }
         boardDict[pieceLocation] = orgPieceLocation
         boardDict[newLocation] = orgNewLocation
+        blackTotalLegalMoves = legalMovesOfColor(color: "black")
+        whiteTotalLegalMoves = legalMovesOfColor(color: "white")
         return true//if the move does not put the king in check, it is legal
     }
     
