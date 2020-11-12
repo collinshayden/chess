@@ -589,7 +589,7 @@ class Board {
     }
     
     func performCastle(boardSquareLocation: String) {
-        if boardSquareLocation == "G1" {//white kingside
+        if boardSquareLocation == "G1" && boardDict[boardSquareLocation]?.piece.pieceType == "king" {//white kingside
             boardDict[boardSquareLocation] = boardSquareToMove
             boardDict["F1"] = boardDict["H1"]
             boardSquareToMove?.piece.hasMoved = true
@@ -598,7 +598,7 @@ class Board {
             boardDict["H1"] = nil
             castlingAvailable = false
         }
-        if boardSquareLocation == "C1" {//white queenside
+        if boardSquareLocation == "C1" && boardDict[boardSquareLocation]?.piece.pieceType == "king" {//white queenside
             boardDict[boardSquareLocation] = boardSquareToMove
             boardDict["D1"] = boardDict["A1"]
             boardSquareToMove?.piece.hasMoved = true
@@ -607,7 +607,7 @@ class Board {
             boardDict["A1"] = nil
             castlingAvailable = false
         }
-        if boardSquareLocation == "G8" {//black kingside
+        if boardSquareLocation == "G8" && boardDict[boardSquareLocation]?.piece.pieceType == "king" {//black kingside
             boardDict[boardSquareLocation] = boardSquareToMove
             boardDict["F8"] = boardDict["H8"]
             boardSquareToMove?.piece.hasMoved = true
@@ -616,7 +616,7 @@ class Board {
             boardDict["H8"] = nil
             castlingAvailable = false
         }
-        if boardSquareLocation == "C8" {//black queenside
+        if boardSquareLocation == "C8" && boardDict[boardSquareLocation]?.piece.pieceType == "king" {//black queenside
             boardDict[boardSquareLocation] = boardSquareToMove
             boardDict["D8"] = boardDict["A8"]
             boardSquareToMove?.piece.hasMoved = true
