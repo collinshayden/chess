@@ -18,7 +18,7 @@ class Board {
     var castlingAvailable = false
     var globalWhiteScore : NSTextField!
     var globalBlackScore : NSTextField!
-    var globalMoveCount : NSTextField!
+    var globalMoveCountDisplay : NSTextField!
     var globalCheckMateText : NSTextField!
     var globalwhiteScoreImageViews : Array<NSImageView>!
     var globalblackScoreImageViews : Array<NSImageView>!
@@ -144,9 +144,7 @@ class Board {
         boardSquareToMove = boardDict[boardSquareLocation]//sets the selected piece to the new piece
         originalCord = boardSquareLocation//saves the current coordinate of the piece
         showLegalMoves(arr: legalMoves)
-        if legalMoves.isEmpty == false {
-            showMoveCount()
-        }
+        showMoveCount()
     }
     
     func getLegalMoves(boardSquareLocation: String) -> Array<String> {//returns an array of legalMoves
@@ -165,7 +163,7 @@ class Board {
                             legalMoves.append(letterCord+numbers[numIndex+1])//white pawn can move up 1 square
                     }
                         if boardSquare.piece.hasMoved == false {
-                            if boardDict[letterCord+numbers[numIndex+2]] == nil {//if there is no piece
+                            if boardDict[letterCord+numbers[numIndex+2]] == nil && boardDict[letterCord+numbers[numIndex+1]] == nil{//if there is no piece on both squares in front
                                 legalMoves.append(letterCord+numbers[numIndex+2])//if white pawn hasnt moved, it can move 2 squares
                             }
                         }
@@ -194,7 +192,7 @@ class Board {
                             legalMoves.append(letterCord+numbers[numIndex-1])//black pawn can move down 1 square
                     }
                         if boardSquare.piece.hasMoved == false {
-                            if boardDict[letterCord+numbers[numIndex-2]] == nil {//if there is no piece
+                            if boardDict[letterCord+numbers[numIndex-2]] == nil && boardDict[letterCord+numbers[numIndex-1]] == nil{//if there is no piece
                                 legalMoves.append(letterCord+numbers[numIndex-2])//if black pawn hasnt moved, it can move 2 squares
                             }
                         }
@@ -515,28 +513,36 @@ class Board {
                     if boardSquare.piece.color == "white" {//white castling
                         if boardDict["H1"]?.piece.hasMoved == false {//kingside
                             if boardDict["F1"] == nil && boardDict["G1"] == nil {
-                                legalMoves.append("G1")
-                                castlingAvailable = true
+                                if (blackTotalLegalMoves.contains("F1") == false) && (blackTotalLegalMoves.contains("G1") == false) {
+                                    legalMoves.append("G1")
+                                    castlingAvailable = true
+                                }
                             }
                         }
                         if boardDict["A1"]?.piece.hasMoved == false {//queenside
                             if boardDict["D1"] == nil && boardDict["C1"] == nil && boardDict["B1"] == nil {
-                                legalMoves.append("C1")
-                                castlingAvailable = true
+                                if blackTotalLegalMoves.contains("D1") == false && blackTotalLegalMoves.contains("C1") == false && blackTotalLegalMoves.contains("B1") == false {
+                                    legalMoves.append("C1")
+                                    castlingAvailable = true
+                                }
                             }
                         }
                     }
                     if boardSquare.piece.color == "black" {//black castling
                         if boardDict["H8"]?.piece.hasMoved == false {//kingside
                             if boardDict["F8"] == nil && boardDict["G8"] == nil {
-                                legalMoves.append("G8")
-                                castlingAvailable = true
+                                if whiteTotalLegalMoves.contains("F8") == false && whiteTotalLegalMoves.contains("G8") == false {
+                                    legalMoves.append("G8")
+                                    castlingAvailable = true
+                                }
                             }
                         }
                         if boardDict["A8"]?.piece.hasMoved == false {//queenside
                             if boardDict["D8"] == nil && boardDict["C8"] == nil && boardDict["B8"] == nil {
-                                legalMoves.append("C8")
-                                castlingAvailable = true
+                                if whiteTotalLegalMoves.contains("D8") == false && whiteTotalLegalMoves.contains("C8") == false && whiteTotalLegalMoves.contains("B8") == false {
+                                    legalMoves.append("C8")
+                                    castlingAvailable = true
+                                }
                             }
                         }
                     }
@@ -645,7 +651,7 @@ class Board {
     func setGlobalVariables(localWhiteScore: NSTextField, localBlackScore: NSTextField, localMoveCount: NSTextField, localCheckMateText: NSTextField, localwhiteScoreImageViews: Array<NSImageView>, localblackScoreImageViews: Array<NSImageView>, localtableView: NSTableView) {
         globalWhiteScore = localWhiteScore
         globalBlackScore = localBlackScore
-        globalMoveCount = localMoveCount
+        globalMoveCountDisplay = localMoveCount
         globalCheckMateText = localCheckMateText
         globalwhiteScoreImageViews = localwhiteScoreImageViews
         globalblackScoreImageViews = localblackScoreImageViews
@@ -752,7 +758,7 @@ class Board {
     }
     
     func showMoveCount() {
-        globalMoveCount.stringValue = "Move: " + String(moveCount)
+        globalMoveCountDisplay.stringValue = "Move: " + String(moveCount)
     }
 
     //returns an array of all legal moves, disregarding discovered checks
