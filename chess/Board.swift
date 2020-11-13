@@ -16,6 +16,7 @@ class Board {
     var boardSquareToMove : BoardSquare?
     var originalCord : String!
     var castlingAvailable = false
+    var enPassantAvailable = false
     var globalWhiteScore : NSTextField!
     var globalBlackScore : NSTextField!
     var globalMoveCountDisplay : NSTextField!
@@ -95,6 +96,9 @@ class Board {
             if legalMoves.contains(boardSquareLocation) {//if a legal move square is clicked
                 if castlingAvailable == true {//if castling is a legal move, and played
                     performCastle(boardSquareLocation: boardSquareLocation)//castle
+                }
+                if enPassantAvailable == true {
+                    performEnPassant(boardSquareLocation: boardSquareLocation, boardSquareToMove: boardSquareToMove!)
                 }
                 updateBoard(boardSquareLocation: boardSquareLocation)//moves pieces, clears legalmoves, records moves, checks for promotion, etc
                 updateBoardView(buttons: buttonDict)//updates images
@@ -185,6 +189,23 @@ class Board {
                             }
                         }
                     }
+                    //en passant for white
+                    if letterIndex-1 >= 0 && numCord == "5"{
+                        if boardDict[letters[letterIndex-1]+numCord]?.piece.pieceType == "pawn" && boardDict[letters[letterIndex-1]+numCord]?.piece.color == "black" {
+                            if movesArr[moveCount-2].blackOrg == letters[letterIndex-1] + "7" {
+                                enPassantAvailable = true
+                                legalMoves.append(letters[letterIndex-1] + "6")
+                            }
+                        }
+                    }
+                    if letterIndex+1 <= 7 && numCord == "5"{
+                        if boardDict[letters[letterIndex+1]+numCord]?.piece.pieceType == "pawn" && boardDict[letters[letterIndex+1]+numCord]?.piece.color == "black" {
+                            if movesArr[moveCount-2].blackOrg == letters[letterIndex+1] + "7" {
+                                enPassantAvailable = true
+                                legalMoves.append(letters[letterIndex+1] + "6")
+                            }
+                        }
+                    }
                 }
                 if boardSquare.piece.color == "black" {
                     if numIndex-1 >= 0 {
@@ -194,6 +215,23 @@ class Board {
                         if boardSquare.piece.hasMoved == false {
                             if boardDict[letterCord+numbers[numIndex-2]] == nil && boardDict[letterCord+numbers[numIndex-1]] == nil{//if there is no piece
                                 legalMoves.append(letterCord+numbers[numIndex-2])//if black pawn hasnt moved, it can move 2 squares
+                            }
+                        }
+                    }
+                    //en passant for black
+                    if letterIndex-1 >= 0 && numCord == "4"{
+                        if boardDict[letters[letterIndex-1]+numCord]?.piece.pieceType == "pawn" && boardDict[letters[letterIndex-1]+numCord]?.piece.color == "white" {
+                            if movesArr[moveCount-1].whiteOrg == letters[letterIndex-1] + "2" {
+                                enPassantAvailable = true
+                                legalMoves.append(letters[letterIndex-1] + "3")
+                            }
+                        }
+                    }
+                    if letterIndex+1 <= 7 && numCord == "4"{
+                        if boardDict[letters[letterIndex+1]+numCord]?.piece.pieceType == "pawn" && boardDict[letters[letterIndex+1]+numCord]?.piece.color == "white" {
+                            if movesArr[moveCount-1].whiteOrg == letters[letterIndex+1] + "2" {
+                                enPassantAvailable = true
+                                legalMoves.append(letters[letterIndex+1] + "3")
                             }
                         }
                     }
@@ -627,6 +665,22 @@ class Board {
         }
     }
     
+    func performEnPassant(boardSquareLocation: String, boardSquareToMove: BoardSquare) {
+        let letterCord = boardSquareLocation.prefix(1)
+        let numCord = boardSquareLocation.suffix(1)
+        let numIndex = numbers.firstIndex(of: String(numCord))!
+        //white
+        if boardSquareToMove.piece.color == "white" {
+            boardDict[boardSquareLocation] = boardSquareToMove//move pawn to new location
+            boardDict[letterCord+numbers[numIndex-1]] = nil//remove pawn that got en passant'd
+        }
+        //black
+        else if boardSquareToMove.piece.color == "black" {
+            boardDict[boardSquareLocation] = boardSquareToMove//move pawn to new location
+            boardDict[letterCord+numbers[numIndex+1]] = nil//remove pawn that got en passant'd
+        }
+    }
+    
     func promotionAvailable() -> Bool {
         for l in letters {
             if boardDict[l+"8"]?.piece.pieceType == "pawn" {
@@ -813,6 +867,12 @@ class Board {
         }
         boardDict[newLocation] = boardDict[pieceLocation]
         boardDict[pieceLocation] = nil
+        if whiteTurn == true {
+            movesArr.append(Move(whiteOrg: pieceLocation, whiteNew: newLocation))
+        }
+        else {
+            movesArr[moveCount-1].setBlackMove(blackOrg: pieceLocation, blackNew: newLocation)
+        }
         
         if whiteTurn == true {//white
             blackTotalLegalMoves = legalMovesOfColor(color: "black")
@@ -836,6 +896,14 @@ class Board {
         boardDict[newLocation] = orgNewLocation
         blackTotalLegalMoves = legalMovesOfColor(color: "black")
         whiteTotalLegalMoves = legalMovesOfColor(color: "white")
+        if whiteTurn == true {
+            movesArr.removeLast()
+        }
+        else {
+            movesArr[moveCount-1].blackOrg = " "
+            movesArr[moveCount-1].blackNew = " "
+
+        }
         return true//if the move does not put the king in check, it is legal
     }
     
