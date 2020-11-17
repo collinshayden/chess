@@ -423,6 +423,8 @@ class ViewController: NSViewController {
         board.setBoardDict(buttons: buttonDict)
         board.setGlobalVariables(localWhiteScore: whiteScore, localBlackScore: blackScore, localMoveCount: MoveCount, localCheckMateText: checkMateText, localwhiteScoreImageViews: whiteScoreImageViews, localblackScoreImageViews: blackScoreImageViews, localtableView: tableView)
         board.showMoveCount()
+        board.movesArr = []
+        tableView.reloadData()
         board.updateBoardView(buttons: buttonDict)
     }
     override var representedObject: Any? {

@@ -95,7 +95,7 @@ class Board {
         else if let _ = boardSquareToMove {
             if legalMoves.contains(boardSquareLocation) {//if a legal move square is clicked
                 if castlingAvailable == true {//if castling is a legal move, and played
-                    performCastle(boardSquareLocation: boardSquareLocation)//castle
+                    performCastle(boardSquareLocation: boardSquareLocation, boardSquareToMove: boardSquareToMove!)//castle
                 }
                 if enPassantAvailable == true {
                     performEnPassant(boardSquareLocation: boardSquareLocation, boardSquareToMove: boardSquareToMove!)
@@ -626,38 +626,34 @@ class Board {
         boardDict["D8"] = BoardSquare(piece: Piece(pieceType: "queen", color: "black", value: 9, hasMoved: false, pieceLegalMoves: Array<String>()), button:buttons["D8"]!)
     }
     
-    func performCastle(boardSquareLocation: String) {
-        if boardSquareLocation == "G1" && boardDict[boardSquareLocation]?.piece.pieceType == "king" {//white kingside
-            boardDict[boardSquareLocation] = boardSquareToMove
+    func performCastle(boardSquareLocation: String, boardSquareToMove: BoardSquare) {
+        if boardSquareLocation == "G1" && boardSquareToMove.piece.pieceType == "king" {//white kingside
             boardDict["F1"] = boardDict["H1"]
-            boardSquareToMove?.piece.hasMoved = true
+            boardSquareToMove.piece.hasMoved = true
             boardDict[originalCord] = nil
             boardDict["H1"]?.piece.hasMoved = true
             boardDict["H1"] = nil
             castlingAvailable = false
         }
-        if boardSquareLocation == "C1" && boardDict[boardSquareLocation]?.piece.pieceType == "king" {//white queenside
-            boardDict[boardSquareLocation] = boardSquareToMove
+        if boardSquareLocation == "C1" && boardSquareToMove.piece.pieceType == "king" {//white queenside
             boardDict["D1"] = boardDict["A1"]
-            boardSquareToMove?.piece.hasMoved = true
+            boardSquareToMove.piece.hasMoved = true
             boardDict[originalCord] = nil
             boardDict["A1"]?.piece.hasMoved = true
             boardDict["A1"] = nil
             castlingAvailable = false
         }
-        if boardSquareLocation == "G8" && boardDict[boardSquareLocation]?.piece.pieceType == "king" {//black kingside
-            boardDict[boardSquareLocation] = boardSquareToMove
+        if boardSquareLocation == "G8" && boardSquareToMove.piece.pieceType == "king" {//black kingside
             boardDict["F8"] = boardDict["H8"]
-            boardSquareToMove?.piece.hasMoved = true
+            boardSquareToMove.piece.hasMoved = true
             boardDict[originalCord] = nil
             boardDict["H8"]?.piece.hasMoved = true
             boardDict["H8"] = nil
             castlingAvailable = false
         }
-        if boardSquareLocation == "C8" && boardDict[boardSquareLocation]?.piece.pieceType == "king" {//black queenside
-            boardDict[boardSquareLocation] = boardSquareToMove
+        if boardSquareLocation == "C8" && boardSquareToMove.piece.pieceType == "king" {//black queenside
             boardDict["D8"] = boardDict["A8"]
-            boardSquareToMove?.piece.hasMoved = true
+            boardSquareToMove.piece.hasMoved = true
             boardDict[originalCord] = nil
             boardDict["A8"]?.piece.hasMoved = true
             boardDict["A8"] = nil
