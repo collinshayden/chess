@@ -23,8 +23,8 @@ class Board {
     var globalCheckMateText : NSTextField!
     var globalwhiteScoreImageViews : Array<NSImageView>!
     var globalblackScoreImageViews : Array<NSImageView>!
-    var capturedWhitePieces = Array<Piece>()
-    var capturedBlackPieces = Array<Piece>()
+    var blackMaterial = Array<Piece>()
+    var whiteMaterial = Array<Piece>()
     var moveCount = 1
     var whiteKingLocation = "E1"
     var blackKingLocation = "E8"
@@ -65,7 +65,6 @@ class Board {
     }
     
     func updateBoard(boardSquareLocation: String) {
-        updateMaterialValue(boardSquareLocation: boardSquareLocation)
         recordMove(orginalCord: originalCord, boardSquareLocation: boardSquareLocation)
         //updating boardDict
         boardDict[boardSquareLocation] = boardSquareToMove
@@ -77,6 +76,7 @@ class Board {
         legalMoves = []
         showLegalMoves(arr: legalMoves)
         updateKingLocation(boardSquareLocation: boardSquareLocation)//if the kings moves, updates position
+        updateMaterialValue(boardSquareLocation: boardSquareLocation)
         boardSquareToMove = nil//resetting selected piece to nil
         if promotionAvailable() == true {promoteToQueen(boardSquareLocation: boardSquareLocation)}// if a pawn is on back rank, becomes a quuen
         if whiteTurn == true {whiteTotalLegalMoves = legalMovesOfColor(color: "white"); whiteTurn = false}//sets whites totalMoves and flips turns
@@ -710,30 +710,25 @@ class Board {
     }
     
     func updateMaterialValue(boardSquareLocation: String) {
-        if boardDict[boardSquareLocation] != nil { //if it is capturing a piece, add the boardSquare to respective capturedPiecesArray
-            if boardDict[boardSquareLocation]?.piece.color == "white" {
-                capturedWhitePieces.append(boardDict[boardSquareLocation]!.piece)
-                if capturedBlackPieces.count > 0 {
-                    for index in stride(from: capturedBlackPieces.count-1, to: -1, by: -1) {
-                        if capturedBlackPieces[index].pieceType == boardDict[boardSquareLocation]?.piece.pieceType {
-                            //if this pieceType is already in the oppposite capturedPieces array, both can be removed because it is even material
-                            capturedBlackPieces.remove(at: index)
-                            capturedWhitePieces.removeLast()
-                            break
-                        }
-                    }
+        //resets material to empty arrays
+        blackMaterial = []
+        whiteMaterial = []
+        //adds all material to respective arrays
+        for l in letters {
+            for n in numbers {
+                if boardDict[l+n] != nil {
+                    if boardDict[l+n]?.piece.color == "white" {whiteMaterial.append(boardDict[l+n]!.piece)}
+                    if boardDict[l+n]?.piece.color == "black" {blackMaterial.append(boardDict[l+n]!.piece)}
                 }
             }
-            if boardDict[boardSquareLocation]?.piece.color == "black" {
-                capturedBlackPieces.append(boardDict[boardSquareLocation]!.piece)
-                if capturedWhitePieces.count > 0 {
-                    for index in stride(from: capturedWhitePieces.count-1, to: -1, by: -1) {
-                        if capturedWhitePieces[index].pieceType == boardDict[boardSquareLocation]?.piece.pieceType {
-                            capturedWhitePieces.remove(at: index)
-                            capturedBlackPieces.removeLast()
-                            break
-                        }
-                    }
+        }
+        for i in stride(from: whiteMaterial.count-1, to: -1, by: -1) {
+            for j in stride(from: blackMaterial.count-1, to: -1, by: -1) {
+                //remove duplicates, so only the inbalance in material shows
+                if whiteMaterial[i].pieceType == blackMaterial[j].pieceType {
+                    whiteMaterial.remove(at: i)
+                    blackMaterial.remove(at: j)
+                    break
                 }
             }
         }
@@ -757,33 +752,33 @@ class Board {
         
         if whiteNumScore > 0 {
             globalWhiteScore.stringValue = "+" + String(whiteNumScore)
-            globalWhiteScore.setFrameOrigin(NSPoint(x:46 + (capturedBlackPieces.count * 20), y: 46))
+            globalWhiteScore.setFrameOrigin(NSPoint(x:46 + (whiteMaterial.count * 20), y: 46))
         }
         else {
             globalWhiteScore.stringValue = " "
         }
         if blackNumScore > 0 {
             globalBlackScore.stringValue = "+" + String(blackNumScore)
-            globalBlackScore.setFrameOrigin(NSPoint(x:46 + (capturedWhitePieces.count * 20), y: 22))
+            globalBlackScore.setFrameOrigin(NSPoint(x:46 + (blackMaterial.count * 20), y: 22))
         }
         else {
             globalBlackScore.stringValue = " "
         }
         
         //ordering the arrays
-        if capturedWhitePieces.count > 1 {
-            for index in stride(from: capturedWhitePieces.count-1, to: 0, by: -1) {
-                if capturedWhitePieces[index].value > capturedWhitePieces[index-1].value {
-                    capturedWhitePieces.insert(capturedWhitePieces[index], at: index-1)
-                    capturedWhitePieces.remove(at: index+1)
+        if blackMaterial.count > 1 {
+            for index in stride(from: blackMaterial.count-1, to: 0, by: -1) {
+                if blackMaterial[index].value > blackMaterial[index-1].value {
+                    blackMaterial.insert(blackMaterial[index], at: index-1)
+                    blackMaterial.remove(at: index+1)
                 }
             }
         }
-        if capturedBlackPieces.count > 1 {
-            for index in stride(from: capturedBlackPieces.count-1, to: 0, by: -1) {
-                if capturedBlackPieces[index].value > capturedBlackPieces[index-1].value {
-                    capturedBlackPieces.insert(capturedBlackPieces[index], at: index-1)
-                    capturedBlackPieces.remove(at: index+1)
+        if whiteMaterial.count > 1 {
+            for index in stride(from: whiteMaterial.count-1, to: 0, by: -1) {
+                if whiteMaterial[index].value > whiteMaterial[index-1].value {
+                    whiteMaterial.insert(whiteMaterial[index], at: index-1)
+                    whiteMaterial.remove(at: index+1)
                 }
             }
         }
@@ -795,14 +790,14 @@ class Board {
             imageView.image = nil
         }
         //displaying the piece images
-        if capturedWhitePieces.count > 0 {
-            for index in 0...capturedWhitePieces.count-1 {
-                globalblackScoreImageViews[index].image = NSImage(named: capturedWhitePieces[index].pieceType + "_white")
+        if blackMaterial.count > 0 {
+            for index in 0...blackMaterial.count-1 {
+                globalblackScoreImageViews[index].image = NSImage(named: blackMaterial[index].pieceType + "_white")
             }
         }
-        if capturedBlackPieces.count > 0 {
-            for index in 0...capturedBlackPieces.count-1 {
-                globalwhiteScoreImageViews[index].image = NSImage(named: capturedBlackPieces[index].pieceType + "_black")
+        if whiteMaterial.count > 0 {
+            for index in 0...whiteMaterial.count-1 {
+                globalwhiteScoreImageViews[index].image = NSImage(named: whiteMaterial[index].pieceType + "_black")
             }
         }
     }
