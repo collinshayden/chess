@@ -80,7 +80,7 @@ class Board {
         boardSquareToMove = nil//resetting selected piece to nil
         if promotionAvailable() == true {promoteToQueen(boardSquareLocation: boardSquareLocation)}// if a pawn is on back rank, becomes a quuen
         if whiteTurn == true {whiteTotalLegalMoves = legalMovesOfColor(color: "white"); whiteTurn = false}//sets whites totalMoves and flips turns
-        else {blackTotalLegalMoves = legalMovesOfColor(color: "black"); whiteTurn = true; moveCount += 1}//sets blacks totalMoves and flips turns
+        else {blackTotalLegalMoves = legalMovesOfColor(color: "black"); whiteTurn = true; moveCount += 1;         showMoveCount()}//sets blacks totalMoves and flips turns
     }
     
     func boardSquareClicked(boardSquareLocation: String) {//when a button is clicked
@@ -148,7 +148,6 @@ class Board {
         boardSquareToMove = boardDict[boardSquareLocation]//sets the selected piece to the new piece
         originalCord = boardSquareLocation//saves the current coordinate of the piece
         showLegalMoves(arr: legalMoves)
-        showMoveCount()
     }
     
     func getLegalMoves(boardSquareLocation: String) -> Array<String> {//returns an array of legalMoves
@@ -862,7 +861,12 @@ class Board {
             movesArr.append(Move(whiteOrg: pieceLocation, whiteNew: newLocation))
         }
         else {
-            movesArr[moveCount-1].setBlackMove(blackOrg: pieceLocation, blackNew: newLocation)
+            if moveCount == 1 {
+                movesArr[moveCount-1].setBlackMove(blackOrg: pieceLocation, blackNew: newLocation)
+            }
+            if moveCount > 1 {
+                movesArr[moveCount-2].setBlackMove(blackOrg: pieceLocation, blackNew: newLocation)
+            }
         }
         
         if whiteTurn == true {//white
@@ -871,6 +875,7 @@ class Board {
                 boardDict[pieceLocation] = orgPieceLocation//reset the pieces
                 boardDict[newLocation] = orgNewLocation
                 blackTotalLegalMoves = legalMovesOfColor(color: "black")
+                movesArr.removeLast()
                 return false//it is not a legal move
             }
         }
@@ -880,6 +885,8 @@ class Board {
                 boardDict[pieceLocation] = orgPieceLocation
                 boardDict[newLocation] = orgNewLocation
                 whiteTotalLegalMoves = legalMovesOfColor(color: "white")
+                movesArr[moveCount-1].blackOrg = " "
+                movesArr[moveCount-1].blackNew = " "
                 return false
             }
         }
@@ -891,9 +898,14 @@ class Board {
             movesArr.removeLast()
         }
         else {
-            movesArr[moveCount-1].blackOrg = " "
-            movesArr[moveCount-1].blackNew = " "
-
+            if moveCount == 1 {
+                movesArr[moveCount-1].blackOrg = " "
+                movesArr[moveCount-1].blackNew = " "
+            }
+            if moveCount > 1 {
+                movesArr[moveCount-2].blackOrg = " "
+                movesArr[moveCount-2].blackNew = " "
+            }
         }
         return true//if the move does not put the king in check, it is legal
     }
