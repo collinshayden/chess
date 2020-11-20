@@ -65,7 +65,6 @@ class Board {
     }
     
     func updateBoard(boardSquareLocation: String) {
-        recordMove(orginalCord: originalCord, boardSquareLocation: boardSquareLocation)
         //updating boardDict
         boardDict[boardSquareLocation] = boardSquareToMove
         boardDict[originalCord] = nil
@@ -75,9 +74,9 @@ class Board {
         //clearing legal moves
         legalMoves = []
         showLegalMoves(arr: legalMoves)
+        boardSquareToMove = nil//resetting selected piece to nil
         updateKingLocation(boardSquareLocation: boardSquareLocation)//if the kings moves, updates position
         updateMaterialValue(boardSquareLocation: boardSquareLocation)
-        boardSquareToMove = nil//resetting selected piece to nil
         if promotionAvailable() == true {promoteToQueen(boardSquareLocation: boardSquareLocation)}// if a pawn is on back rank, becomes a quuen
         if whiteTurn == true {whiteTotalLegalMoves = legalMovesOfColor(color: "white"); whiteTurn = false}//sets whites totalMoves and flips turns
         else {blackTotalLegalMoves = legalMovesOfColor(color: "black"); whiteTurn = true; moveCount += 1;         showMoveCount()}//sets blacks totalMoves and flips turns
@@ -97,12 +96,13 @@ class Board {
                 if castlingAvailable == true {//if castling is a legal move, and played
                     performCastle(boardSquareLocation: boardSquareLocation, boardSquareToMove: boardSquareToMove!)//castle
                 }
-                if enPassantAvailable == true {
+                if enPassantAvailable == true {//if en passant is legal and played
                     performEnPassant(boardSquareLocation: boardSquareLocation, boardSquareToMove: boardSquareToMove!)
                 }
                 updateBoard(boardSquareLocation: boardSquareLocation)//moves pieces, clears legalmoves, records moves, checks for promotion, etc
                 updateBoardView(buttons: buttonDict)//updates images
                 checkforCheck(whiteKingLocation: whiteKingLocation, blackKingLocation: blackKingLocation)
+                recordMove(orginalCord: originalCord, boardSquareLocation: boardSquareLocation)
             }
             //if it is white's turn and white clicks on another white piece
             else if boardDict[boardSquareLocation]?.piece.color == "white" && whiteTurn == true {
@@ -144,7 +144,7 @@ class Board {
     func selectPiece(boardSquareLocation: String) {
         legalMoves = []//clears legal moves
         legalMoves = getLegalMoves(boardSquareLocation: boardSquareLocation)//reassigns the legal moves of selected piece
-        legalMoves = forcedToPreventCheck(whiteKingLocation: whiteKingLocation, blackKingLocation: blackKingLocation, pieceLocation: boardSquareLocation, legalMoves: legalMoves, whiteTurn: whiteTurn)
+        legalMoves = forcedToPreventCheck(whiteKingLocation: whiteKingLocation, blackKingLocation: blackKingLocation, pieceLocation: boardSquareLocation, legalMoves: legalMoves, whiteTurn: whiteTurn)//removes any moves that would put the king in check
         boardSquareToMove = boardDict[boardSquareLocation]//sets the selected piece to the new piece
         originalCord = boardSquareLocation//saves the current coordinate of the piece
         showLegalMoves(arr: legalMoves)
@@ -171,7 +171,6 @@ class Board {
                             }
                         }
                     }
-
                     //white pawn can capture up right 1 square
                     if letterIndex+1 <= 7 && numIndex+1 <= 7 {
                         if boardDict[letters[letterIndex+1]+numbers[numIndex+1]] != nil {
@@ -220,7 +219,7 @@ class Board {
                     //en passant for black
                     if letterIndex-1 >= 0 && numCord == "4"{
                         if boardDict[letters[letterIndex-1]+numCord]?.piece.pieceType == "pawn" && boardDict[letters[letterIndex-1]+numCord]?.piece.color == "white" {
-                            if movesArr[moveCount-1].whiteOrg == letters[letterIndex-1] + "2" {
+                            if movesArr[movesArr.count-1].whiteOrg == letters[letterIndex-1] + "2" {
                                 enPassantAvailable = true
                                 legalMoves.append(letters[letterIndex-1] + "3")
                             }
@@ -228,7 +227,7 @@ class Board {
                     }
                     if letterIndex+1 <= 7 && numCord == "4"{
                         if boardDict[letters[letterIndex+1]+numCord]?.piece.pieceType == "pawn" && boardDict[letters[letterIndex+1]+numCord]?.piece.color == "white" {
-                            if movesArr[moveCount-1].whiteOrg == letters[letterIndex+1] + "2" {
+                            if movesArr[movesArr.count-1].whiteOrg == letters[letterIndex+1] + "2" {
                                 enPassantAvailable = true
                                 legalMoves.append(letters[letterIndex+1] + "3")
                             }
@@ -252,7 +251,6 @@ class Board {
                     }
                 }
             }
-            
             if boardSquare.piece.pieceType == "rook" {
                 //left
                 i = 1
@@ -413,7 +411,6 @@ class Board {
                     i += 1
                 }
             }
-
             if boardSquare.piece.pieceType == "queen"{
                 //left
                 i = 1
@@ -850,8 +847,8 @@ class Board {
     func checkLegalMove(kingLocation: String, pieceLocation: String, newLocation: String, whiteTurn: Bool) -> Bool{
         let orgPieceLocation = boardDict[pieceLocation]
         let orgNewLocation = boardDict[newLocation]
+        let orgMovesArr = movesArr
         var kingLocation = kingLocation
-        
         if pieceLocation == kingLocation {
             kingLocation = newLocation
         }
@@ -861,12 +858,7 @@ class Board {
             movesArr.append(Move(whiteOrg: pieceLocation, whiteNew: newLocation))
         }
         else {
-            if moveCount == 1 {
-                movesArr[moveCount-1].setBlackMove(blackOrg: pieceLocation, blackNew: newLocation)
-            }
-            if moveCount > 1 {
-                movesArr[moveCount-2].setBlackMove(blackOrg: pieceLocation, blackNew: newLocation)
-            }
+            movesArr[movesArr.count-1].setBlackMove(blackOrg: pieceLocation, blackNew: newLocation)
         }
         
         if whiteTurn == true {//white
@@ -875,7 +867,7 @@ class Board {
                 boardDict[pieceLocation] = orgPieceLocation//reset the pieces
                 boardDict[newLocation] = orgNewLocation
                 blackTotalLegalMoves = legalMovesOfColor(color: "black")
-                movesArr.removeLast()
+                movesArr = orgMovesArr
                 return false//it is not a legal move
             }
         }
@@ -885,8 +877,7 @@ class Board {
                 boardDict[pieceLocation] = orgPieceLocation
                 boardDict[newLocation] = orgNewLocation
                 whiteTotalLegalMoves = legalMovesOfColor(color: "white")
-                movesArr[moveCount-1].blackOrg = " "
-                movesArr[moveCount-1].blackNew = " "
+                movesArr = orgMovesArr
                 return false
             }
         }
@@ -894,19 +885,7 @@ class Board {
         boardDict[newLocation] = orgNewLocation
         blackTotalLegalMoves = legalMovesOfColor(color: "black")
         whiteTotalLegalMoves = legalMovesOfColor(color: "white")
-        if whiteTurn == true {
-            movesArr.removeLast()
-        }
-        else {
-            if moveCount == 1 {
-                movesArr[moveCount-1].blackOrg = " "
-                movesArr[moveCount-1].blackNew = " "
-            }
-            if moveCount > 1 {
-                movesArr[moveCount-2].blackOrg = " "
-                movesArr[moveCount-2].blackNew = " "
-            }
-        }
+        movesArr = orgMovesArr
         return true//if the move does not put the king in check, it is legal
     }
     
@@ -956,11 +935,11 @@ class Board {
         }
     }
     func recordMove(orginalCord: String, boardSquareLocation: String) {
-        if whiteTurn == true {
-            movesArr.append(Move(whiteOrg: originalCord, whiteNew: boardSquareLocation))
+        if whiteTurn == false {//false because it is called after whiteTurn is switched
+            movesArr.append(Move(whiteOrg: originalCord, whiteNew: boardSquareLocation))//logs whites move
         }
         else {
-            movesArr[moveCount-1].setBlackMove(blackOrg: originalCord, blackNew: boardSquareLocation)
+            movesArr[movesArr.count-1].setBlackMove(blackOrg: originalCord, blackNew: boardSquareLocation)//logs blacks move
         }
         tableView.reloadData()
     }
