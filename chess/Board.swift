@@ -7,6 +7,7 @@
 //
 import Foundation
 import Cocoa
+import PythonKit
 
 class Board {
     var boardDict = [String:BoardSquare]()
@@ -32,6 +33,7 @@ class Board {
     var blackTotalLegalMoves = Array<String>()
     var movesArr = Array<Move>()
     var tableView : NSTableView!
+    let enableEngine = true
 
     //this displays the pieces on the view based on boardDict
     func updateBoardView(buttons: Dictionary<String,NSButton>){
@@ -63,25 +65,25 @@ class Board {
         }
         showMaterialValue(globalWhiteScore: globalWhiteScore, globalBlackScore: globalBlackScore)
     }
-    
-    func updateBoard(boardSquareLocation: String) {
+
+    func updateBoard(newPosition: String, originalBoardSquare: BoardSquare) {
         //updating boardDict
-        boardDict[boardSquareLocation] = boardSquareToMove
+        boardDict[newPosition] = originalBoardSquare
         boardDict[originalCord] = nil
         boardSquareToMove?.piece.hasMoved = true
         //saves the legal moves of next turn for the moved piece
-        boardDict[boardSquareLocation]?.piece.pieceLegalMoves = getLegalMoves(boardSquareLocation: boardSquareLocation)
+        boardDict[newPosition]?.piece.pieceLegalMoves = getLegalMoves(boardSquareLocation: newPosition)
         //clearing legal moves
         legalMoves = []
         showLegalMoves(arr: legalMoves)
         boardSquareToMove = nil//resetting selected piece to nil
-        updateKingLocation(boardSquareLocation: boardSquareLocation)//if the kings moves, updates position
-        updateMaterialValue(boardSquareLocation: boardSquareLocation)
-        if promotionAvailable() == true {promoteToQueen(boardSquareLocation: boardSquareLocation)}// if a pawn is on back rank, becomes a quuen
+        updateKingLocation(boardSquareLocation: newPosition)//if the kings moves, updates position
+        updateMaterialValue(boardSquareLocation: newPosition)
+        if promotionAvailable() == true {promoteToQueen(boardSquareLocation: newPosition)}// if a pawn is on back rank, becomes a quuen
         if whiteTurn == true {whiteTotalLegalMoves = legalMovesOfColor(color: "white"); whiteTurn = false}//sets whites totalMoves and flips turns
         else {blackTotalLegalMoves = legalMovesOfColor(color: "black"); whiteTurn = true; moveCount += 1;         showMoveCount()}//sets blacks totalMoves and flips turns
     }
-    
+
     func boardSquareClicked(boardSquareLocation: String) {//when a button is clicked
         if boardSquareToMove == nil{//if a new piece is selected
             if boardDict[boardSquareLocation]?.piece.color == "white" && whiteTurn == true {
@@ -99,7 +101,7 @@ class Board {
                 if enPassantAvailable == true {//if en passant is legal and played
                     performEnPassant(boardSquareLocation: boardSquareLocation, boardSquareToMove: boardSquareToMove!)
                 }
-                updateBoard(boardSquareLocation: boardSquareLocation)//moves pieces, clears legalmoves, records moves, checks for promotion, etc
+                updateBoard(newPosition: boardSquareLocation, originalBoardSquare: boardSquareToMove!)//moves pieces, clears legalmoves, records moves, checks for promotion, etc
                 updateBoardView(buttons: buttonDict)//updates images
                 checkforCheck(whiteKingLocation: whiteKingLocation, blackKingLocation: blackKingLocation)
                 recordMove(orginalCord: originalCord, boardSquareLocation: boardSquareLocation)
@@ -114,7 +116,7 @@ class Board {
             }
         }
     }
-    
+
     func showLegalMoves(arr: Array<String>) {
         let legalMoves = arr
         //resets the display of legal moves for every click of a piece
@@ -140,7 +142,7 @@ class Board {
             }
         }
     }
-    
+
     func selectPiece(boardSquareLocation: String) {
         legalMoves = []//clears legal moves
         legalMoves = getLegalMoves(boardSquareLocation: boardSquareLocation)//reassigns the legal moves of selected piece
@@ -149,7 +151,7 @@ class Board {
         originalCord = boardSquareLocation//saves the current coordinate of the piece
         showLegalMoves(arr: legalMoves)
     }
-    
+
     func getLegalMoves(boardSquareLocation: String) -> Array<String> {//returns an array of legalMoves
         if let boardSquare = boardDict[boardSquareLocation] {//if there is a BoardSquare(a piece) at that coordinate, if not nothing happens
             let letterCord = boardSquareLocation.prefix(1)
@@ -158,7 +160,7 @@ class Board {
             let numIndex = numbers.firstIndex(of: String(numCord))!
             var i = 1
             legalMoves = []
-                
+
             if boardSquare.piece.pieceType == "pawn" {
                 if boardSquare.piece.color == "white" {
                     if numIndex+1 <= 7 {
@@ -585,7 +587,7 @@ class Board {
         }
         return legalMoves
     }
-    
+
     func setBoardDict(buttons: [String:NSButton]) {
         self.buttons = buttons
         //initializing all boardDict values as nil
@@ -621,7 +623,7 @@ class Board {
         boardDict["E8"] = BoardSquare(piece: Piece(pieceType: "king", color: "black", value: 0, hasMoved: false, pieceLegalMoves: Array<String>()), button:buttons["E8"]!)
         boardDict["D8"] = BoardSquare(piece: Piece(pieceType: "queen", color: "black", value: 9, hasMoved: false, pieceLegalMoves: Array<String>()), button:buttons["D8"]!)
     }
-    
+
     func performCastle(boardSquareLocation: String, boardSquareToMove: BoardSquare) {
         if boardSquareLocation == "G1" && boardSquareToMove.piece.pieceType == "king" {//white kingside
             boardDict["F1"] = boardDict["H1"]
@@ -656,7 +658,7 @@ class Board {
             castlingAvailable = false
         }
     }
-    
+
     func performEnPassant(boardSquareLocation: String, boardSquareToMove: BoardSquare) {
         let letterCord = boardSquareLocation.prefix(1)
         let numCord = boardSquareLocation.suffix(1)
@@ -672,7 +674,7 @@ class Board {
             boardDict[letterCord+numbers[numIndex+1]] = nil//remove pawn that got en passant'd
         }
     }
-    
+
     func promotionAvailable() -> Bool {
         for l in letters {
             if boardDict[l+"8"]?.piece.pieceType == "pawn" {
@@ -684,7 +686,7 @@ class Board {
         }
         return false
     }
-    
+
     func promoteToQueen(boardSquareLocation: String){//if is on back rank, creates a new piece object of queen
         if boardDict[boardSquareLocation]?.piece.color == "white" {
             boardDict[boardSquareLocation] = BoardSquare(piece: Piece(pieceType: "queen", color: "white", value: 9, hasMoved: true, pieceLegalMoves: Array<String>()), button: buttons[boardSquareLocation]!)
@@ -693,7 +695,7 @@ class Board {
             boardDict[boardSquareLocation] = BoardSquare(piece: Piece(pieceType: "queen", color: "black", value: 9, hasMoved: true, pieceLegalMoves: Array<String>()), button: buttons[boardSquareLocation]!)
         }
     }
-    
+
     func setGlobalVariables(localWhiteScore: NSTextField, localBlackScore: NSTextField, localMoveCount: NSTextField, localCheckMateText: NSTextField, localwhiteScoreImageViews: Array<NSImageView>, localblackScoreImageViews: Array<NSImageView>, localtableView: NSTableView) {
         globalWhiteScore = localWhiteScore
         globalBlackScore = localBlackScore
@@ -704,7 +706,7 @@ class Board {
         moveCount = 1
         tableView = localtableView
     }
-    
+
     func updateMaterialValue(boardSquareLocation: String) {
         //resets material to empty arrays
         blackMaterial = []
@@ -729,7 +731,7 @@ class Board {
             }
         }
     }
-    
+
     func showMaterialValue(globalWhiteScore: NSTextField, globalBlackScore: NSTextField) {
         var whiteMaterialValue = 0
         var blackMaterialValue = 0
@@ -745,7 +747,7 @@ class Board {
         }
         let whiteNumScore = whiteMaterialValue-blackMaterialValue
         let blackNumScore = blackMaterialValue-whiteMaterialValue
-        
+
         if whiteNumScore > 0 {
             globalWhiteScore.stringValue = "+" + String(whiteNumScore)
             globalWhiteScore.setFrameOrigin(NSPoint(x:46 + (whiteMaterial.count * 20), y: 46))
@@ -760,7 +762,7 @@ class Board {
         else {
             globalBlackScore.stringValue = " "
         }
-        
+
         //ordering the arrays
         if blackMaterial.count > 1 {
             for index in stride(from: blackMaterial.count-1, to: 0, by: -1) {
@@ -797,7 +799,7 @@ class Board {
             }
         }
     }
-    
+
     func showMoveCount() {
         globalMoveCountDisplay.stringValue = "Move: " + String(moveCount)
     }
@@ -814,7 +816,7 @@ class Board {
         }
         return totalLegalMoves
     }
-    
+
     //returns an array of all legal moves, checking for discovered checks into account
     func updatedLegalMovesOfColor(color: String) -> Array<String> {
         var updatedTotalLegalMoves = Array<String>()
@@ -842,7 +844,7 @@ class Board {
         }
         return updatedTotalLegalMoves
     }
-    
+
     //simulates the move of a piece, to see if it would put or keep the king in check
     func checkLegalMove(kingLocation: String, pieceLocation: String, newLocation: String, whiteTurn: Bool) -> Bool{
         let orgPieceLocation = boardDict[pieceLocation]
@@ -860,7 +862,7 @@ class Board {
         else {
             movesArr[movesArr.count-1].setBlackMove(blackOrg: pieceLocation, blackNew: newLocation)
         }
-        
+
         if whiteTurn == true {//white
             blackTotalLegalMoves = legalMovesOfColor(color: "black")
             if blackTotalLegalMoves.contains(kingLocation) == true {//if white is in check
@@ -888,10 +890,10 @@ class Board {
         movesArr = orgMovesArr
         return true//if the move does not put the king in check, it is legal
     }
-    
+
     func forcedToPreventCheck(whiteKingLocation: String, blackKingLocation: String, pieceLocation: String, legalMoves: Array<String>, whiteTurn: Bool) -> Array<String> {
         var tempLegalMoves = legalMoves
-        
+
         for index in stride(from: legalMoves.count-1, to: -1, by: -1) {
             if whiteTurn == true {
                 if checkLegalMove(kingLocation: whiteKingLocation, pieceLocation: pieceLocation, newLocation: legalMoves[index], whiteTurn: whiteTurn) == false {
@@ -906,7 +908,7 @@ class Board {
         }
         return tempLegalMoves
     }
-    
+
     //if either side is in check, calls inCheck()
     func checkforCheck(whiteKingLocation: String, blackKingLocation: String) {
         if whiteTurn == true {
@@ -920,20 +922,21 @@ class Board {
             }
         }
     }
-    
+
     func inCheck(kingLocation: String, color: String) {
         buttons[kingLocation]!.image = NSImage(named: "king_" + color + "_check")
         checkForCheckMate()
     }
-    
+
     func checkForCheckMate() {
         if updatedLegalMovesOfColor(color: "white").isEmpty {
             globalCheckMateText.stringValue = "Black wins by checkmate"
         }
         if updatedLegalMovesOfColor(color: "black").isEmpty {
-            globalCheckMateText.stringValue = "White wins by checkmate" 
+            globalCheckMateText.stringValue = "White wins by checkmate"
         }
     }
+
     func recordMove(orginalCord: String, boardSquareLocation: String) {
         if whiteTurn == false {//false because it is called after whiteTurn is switched
             movesArr.append(Move(whiteOrg: originalCord, whiteNew: boardSquareLocation))//logs whites move
@@ -943,6 +946,7 @@ class Board {
         }
         tableView.reloadData()
     }
+
     func updateKingLocation(boardSquareLocation: String) {
         //if the kings move, update the king location variable
         if boardSquareToMove?.piece.pieceType == "king" && boardSquareToMove?.piece.color == "white" {
@@ -951,5 +955,36 @@ class Board {
         if boardSquareToMove?.piece.pieceType == "king" && boardSquareToMove?.piece.color == "black" {
             blackKingLocation = boardSquareLocation
         }
+    }
+
+    //Universal Chess Interface (UCI) is a format for communicating moves with engines. Very similar to long algebraic notation, it is simple the original coordinate and new coordinate.
+    func UCIMoveArray() -> Array<String>{
+        var UCIMoveArr = Array<String>()
+        for move in movesArr {
+            let tempWhiteMove = move.whiteOrg + move.whiteNew
+            UCIMoveArr.append(tempWhiteMove)
+            if move.blackOrg != " " && move.blackNew != " " {
+                let tempBlackMove = move.blackOrg + move.blackNew
+                UCIMoveArr.append(tempBlackMove)
+            }
+        }
+        return UCIMoveArr
+    }
+
+    func runStockFish() -> String{
+        let dirPath = "/Users/haydencollins/Desktop/programming/projects/chess/sf.py"//path to python file
+        let sys = Python.import("sys")
+        sys.path.append(dirPath)
+        let stockfish = Python.import("sf")
+        let stockfishRecommendation = String(stockfish.moveRecommendation(UCIMoveArray(), 1000))!
+        return stockfishRecommendation
+    }
+
+    func engineMove() {
+        let move = runStockFish()
+        let originalPosition = String(move.prefix(2))
+        let newPosition = String(move.suffix(2))
+        boardDict[newPosition] = boardDict[originalPosition]
+        boardDict[originalPosition] = nil
     }
 }
