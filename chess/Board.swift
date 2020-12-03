@@ -70,7 +70,7 @@ class Board {
         //updating boardDict
         boardDict[newPosition] = originalBoardSquare
         boardDict[originalCord] = nil
-        boardSquareToMove?.piece.hasMoved = true
+        boardDict[newPosition]?.piece.hasMoved = true
         //saves the legal moves of next turn for the moved piece
         boardDict[newPosition]?.piece.pieceLegalMoves = getLegalMoves(boardSquareLocation: newPosition)
         //clearing legal moves
@@ -81,7 +81,7 @@ class Board {
         updateMaterialValue(boardSquareLocation: newPosition)
         if promotionAvailable() == true {promoteToQueen(boardSquareLocation: newPosition)}// if a pawn is on back rank, becomes a quuen
         if whiteTurn == true {whiteTotalLegalMoves = legalMovesOfColor(color: "white"); whiteTurn = false}//sets whites totalMoves and flips turns
-        else {blackTotalLegalMoves = legalMovesOfColor(color: "black"); whiteTurn = true; moveCount += 1;         showMoveCount()}//sets blacks totalMoves and flips turns
+        else {blackTotalLegalMoves = legalMovesOfColor(color: "black"); whiteTurn = true; moveCount += 1; showMoveCount()}//sets blacks totalMoves and flips turns
     }
 
     func boardSquareClicked(boardSquareLocation: String) {//when a button is clicked
@@ -972,7 +972,7 @@ class Board {
     }
 
     func runStockFish() -> String{
-        let dirPath = "/Users/haydencollins/Desktop/programming/projects/chess/sf.py"//path to python file
+        let dirPath = "/Users/haydencollins/Desktop/programming/projects/chess"//path to python file
         let sys = Python.import("sys")
         sys.path.append(dirPath)
         let stockfish = Python.import("sf")
@@ -984,7 +984,7 @@ class Board {
         let move = runStockFish()
         let originalPosition = String(move.prefix(2))
         let newPosition = String(move.suffix(2))
-        boardDict[newPosition] = boardDict[originalPosition]
-        boardDict[originalPosition] = nil
+        updateBoard(newPosition: newPosition, originalBoardSquare: boardDict[originalPosition]!)
+        updateBoardView(buttons: buttonDict)
     }
 }

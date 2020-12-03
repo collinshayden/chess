@@ -313,6 +313,9 @@ class ViewController: NSViewController {
     @IBAction func ButtonActionH8(_ sender: Any) {
         board.boardSquareClicked(boardSquareLocation: "H8")
     }
+    @IBAction func engineMove(_ sender: Any) {
+        board.engineMove()
+    }
     
     
     override func viewDidLoad() {
