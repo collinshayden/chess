@@ -949,10 +949,10 @@ class Board {
 
     func updateKingLocation(boardSquareLocation: String) {
         //if the kings move, update the king location variable
-        if boardSquareToMove?.piece.pieceType == "king" && boardSquareToMove?.piece.color == "white" {
+        if boardDict[boardSquareLocation]?.piece.pieceType == "king" && boardDict[boardSquareLocation]?.piece.color == "white" {
             whiteKingLocation = boardSquareLocation
         }
-        if boardSquareToMove?.piece.pieceType == "king" && boardSquareToMove?.piece.color == "black" {
+        if boardDict[boardSquareLocation]?.piece.pieceType == "king" && boardDict[boardSquareLocation]?.piece.color == "black" {
             blackKingLocation = boardSquareLocation
         }
     }
