@@ -66,10 +66,10 @@ class Board {
         showMaterialValue(globalWhiteScore: globalWhiteScore, globalBlackScore: globalBlackScore)
     }
 
-    func updateBoard(newPosition: String, originalBoardSquare: BoardSquare) {
+    func updateBoard(newPosition: String, originalPosition: String) {
         //updating boardDict
-        boardDict[newPosition] = originalBoardSquare
-        boardDict[originalCord] = nil
+        boardDict[newPosition] = boardDict[originalPosition]
+        boardDict[originalPosition] = nil
         boardDict[newPosition]?.piece.hasMoved = true
         //saves the legal moves of next turn for the moved piece
         boardDict[newPosition]?.piece.pieceLegalMoves = getLegalMoves(boardSquareLocation: newPosition)
@@ -101,10 +101,10 @@ class Board {
                 if enPassantAvailable == true {//if en passant is legal and played
                     performEnPassant(boardSquareLocation: boardSquareLocation, boardSquareToMove: boardSquareToMove!)
                 }
-                updateBoard(newPosition: boardSquareLocation, originalBoardSquare: boardSquareToMove!)//moves pieces, clears legalmoves, records moves, checks for promotion, etc
+                updateBoard(newPosition: boardSquareLocation, originalPosition: originalCord)//moves pieces, clears legalmoves, records moves, checks for promotion, etc
                 updateBoardView(buttons: buttonDict)//updates images
                 checkforCheck(whiteKingLocation: whiteKingLocation, blackKingLocation: blackKingLocation)
-                recordMove(orginalCord: originalCord, boardSquareLocation: boardSquareLocation)
+                recordMove(originalPosition: originalCord, newPosition: boardSquareLocation)
             }
             //if it is white's turn and white clicks on another white piece
             else if boardDict[boardSquareLocation]?.piece.color == "white" && whiteTurn == true {
@@ -937,12 +937,12 @@ class Board {
         }
     }
 
-    func recordMove(orginalCord: String, boardSquareLocation: String) {
+    func recordMove(originalPosition: String, newPosition: String) {
         if whiteTurn == false {//false because it is called after whiteTurn is switched
-            movesArr.append(Move(whiteOrg: originalCord, whiteNew: boardSquareLocation))//logs whites move
+            movesArr.append(Move(whiteOrg: originalPosition, whiteNew: newPosition))//logs whites move
         }
         else {
-            movesArr[movesArr.count-1].setBlackMove(blackOrg: originalCord, blackNew: boardSquareLocation)//logs blacks move
+            movesArr[movesArr.count-1].setBlackMove(blackOrg: originalPosition, blackNew: newPosition)//logs blacks move
         }
         tableView.reloadData()
     }
@@ -961,10 +961,10 @@ class Board {
     func UCIMoveArray() -> Array<String>{
         var UCIMoveArr = Array<String>()
         for move in movesArr {
-            let tempWhiteMove = move.whiteOrg + move.whiteNew
+            let tempWhiteMove = (move.whiteOrg + move.whiteNew).lowercased()
             UCIMoveArr.append(tempWhiteMove)
             if move.blackOrg != " " && move.blackNew != " " {
-                let tempBlackMove = move.blackOrg + move.blackNew
+                let tempBlackMove = (move.blackOrg + move.blackNew).lowercased()
                 UCIMoveArr.append(tempBlackMove)
             }
         }
@@ -975,16 +975,19 @@ class Board {
         let dirPath = "/Users/haydencollins/Desktop/programming/projects/chess"//path to python file
         let sys = Python.import("sys")
         sys.path.append(dirPath)
-        let stockfish = Python.import("sf")
+        let stockfish = Python.import("stockfishpythonfile")
         let stockfishRecommendation = String(stockfish.moveRecommendation(UCIMoveArray(), 1000))!
         return stockfishRecommendation
     }
 
     func engineMove() {
         let move = runStockFish()
-        let originalPosition = String(move.prefix(2))
-        let newPosition = String(move.suffix(2))
-        updateBoard(newPosition: newPosition, originalBoardSquare: boardDict[originalPosition]!)
+        let originalPosition = String(move.prefix(2)).capitalized
+        let newPosition = String(move.suffix(2)).capitalized
+        updateBoard(newPosition: newPosition, originalPosition: originalPosition)
+        checkforCheck(whiteKingLocation: whiteKingLocation, blackKingLocation: blackKingLocation)
+        recordMove(originalPosition: originalPosition, newPosition: newPosition)
         updateBoardView(buttons: buttonDict)
+
     }
 }
