@@ -13,29 +13,42 @@ class Move {
     let whiteNew : String
     var blackOrg : String
     var blackNew : String
+    var whiteCapture : Bool
+    var blackCapture : Bool
     
-    init(whiteOrg: String, whiteNew: String) {
-        self.whiteOrg = whiteOrg
-        self.whiteNew = whiteNew
+    init(whiteOrg: String, whiteNew: String, whiteCapture: Bool) {
+        self.whiteCapture = whiteCapture
+        self.whiteOrg = whiteOrg.lowercased()
+        self.whiteNew = whiteNew.lowercased()
         self.blackOrg = " "
         self.blackNew = " "
+        self.blackCapture = false
     }
     
-    func setBlackMove(blackOrg: String, blackNew: String) {
-        self.blackOrg = blackOrg
-        self.blackNew = blackNew
+    func setBlackMove(blackOrg: String, blackNew: String, blackCapture: Bool) {
+        self.blackOrg = blackOrg.lowercased()
+        self.blackNew = blackNew.lowercased()
+        self.blackCapture = blackCapture
     }
     
     func getWhiteMove() -> String {
-        return whiteOrg + " -> " + whiteNew
+        if whiteCapture == true {
+            return whiteOrg + "x" + whiteNew
+        }
+        else {
+            return whiteOrg + whiteNew
+        }
     }
     
     func getBlackMove() -> String {
         if blackOrg == " " && blackNew == " "{
             return " "
         }
+        else if blackCapture == true {
+            return blackOrg + "x" + blackNew
+        }
         else {
-            return blackOrg + " -> " + blackNew
+            return blackOrg + blackNew
         }
     }
 }

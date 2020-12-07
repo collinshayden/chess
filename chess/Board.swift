@@ -66,9 +66,14 @@ class Board {
         showMaterialValue(globalWhiteScore: globalWhiteScore, globalBlackScore: globalBlackScore)
     }
 
-    func updateBoard(newPosition: String, originalPosition: String) {
+    func updateBoard(originalPosition: String, newPosition: String) {
+        if boardDict[newPosition] != nil {
+            recordMove(originalPosition: originalPosition, newPosition: newPosition, capture: true)
+        }
+        else {
+            recordMove(originalPosition: originalPosition, newPosition: newPosition, capture: false)
+        }
         //updating boardDict
-        
         boardDict[newPosition] = boardDict[originalPosition]
         boardDict[originalPosition] = nil
         boardDict[newPosition]?.piece.hasMoved = true
@@ -81,12 +86,12 @@ class Board {
             performCastle(originalPosition: originalPosition, newPosition: newPosition)//castle
         }
         if enPassantAvailable == true {//if en passant is legal and played
-            performEnPassant(boardSquareLocation: newPosition, boardSquareToMove: boardSquareToMove!)
+            performEnPassant(newPosition: newPosition, boardSquareToMove: boardSquareToMove!)
         }
         if promotionAvailable() == true {promoteToQueen(boardSquareLocation: newPosition)}// if a pawn is on back rank, becomes a quuen
         boardSquareToMove = nil//resetting selected piece to nil
         updateKingLocation(boardSquareLocation: newPosition)//if the kings moves, updates position
-        updateMaterialValue(boardSquareLocation: newPosition)
+        updateMaterialValue()
         if whiteTurn == true {whiteTotalLegalMoves = legalMovesOfColor(color: "white"); whiteTurn = false}//sets whites totalMoves and flips turns
         else {blackTotalLegalMoves = legalMovesOfColor(color: "black"); whiteTurn = true; moveCount += 1; showMoveCount()}//sets blacks totalMoves and flips turns
     }
@@ -102,10 +107,9 @@ class Board {
         }
         else if let _ = boardSquareToMove {
             if legalMoves.contains(boardSquareLocation) {//if a legal move square is clicked
-                updateBoard(newPosition: boardSquareLocation, originalPosition: originalCord)//moves pieces, clears legalmoves, records moves, checks for promotion, etc
+                updateBoard(originalPosition: originalCord, newPosition: boardSquareLocation)//moves pieces, clears legalmoves, records moves, checks for promotion, etc
                 updateBoardView(buttons: buttonDict)//updates images
                 checkforCheck(whiteKingLocation: whiteKingLocation, blackKingLocation: blackKingLocation)
-                recordMove(originalPosition: originalCord, newPosition: boardSquareLocation)
             }
             //if it is white's turn and white clicks on another white piece
             else if boardDict[boardSquareLocation]?.piece.color == "white" && whiteTurn == true {
@@ -660,18 +664,18 @@ class Board {
         }
     }
 
-    func performEnPassant(boardSquareLocation: String, boardSquareToMove: BoardSquare) {
-        let letterCord = boardSquareLocation.prefix(1)
-        let numCord = boardSquareLocation.suffix(1)
+    func performEnPassant(newPosition: String, boardSquareToMove: BoardSquare) {
+        let letterCord = newPosition.prefix(1)
+        let numCord = newPosition.suffix(1)
         let numIndex = numbers.firstIndex(of: String(numCord))!
         //white
         if boardSquareToMove.piece.color == "white" {
-            boardDict[boardSquareLocation] = boardSquareToMove//move pawn to new location
+            boardDict[newPosition] = boardSquareToMove//move pawn to new location
             boardDict[letterCord+numbers[numIndex-1]] = nil//remove pawn that got en passant'd
         }
         //black
         else if boardSquareToMove.piece.color == "black" {
-            boardDict[boardSquareLocation] = boardSquareToMove//move pawn to new location
+            boardDict[newPosition] = boardSquareToMove//move pawn to new location
             boardDict[letterCord+numbers[numIndex+1]] = nil//remove pawn that got en passant'd
         }
     }
@@ -708,7 +712,7 @@ class Board {
         tableView = localtableView
     }
 
-    func updateMaterialValue(boardSquareLocation: String) {
+    func updateMaterialValue() {
         //resets material to empty arrays
         blackMaterial = []
         whiteMaterial = []
@@ -858,10 +862,10 @@ class Board {
         boardDict[newLocation] = boardDict[pieceLocation]
         boardDict[pieceLocation] = nil
         if whiteTurn == true {
-            movesArr.append(Move(whiteOrg: pieceLocation, whiteNew: newLocation))
+            movesArr.append(Move(whiteOrg: pieceLocation, whiteNew: newLocation, whiteCapture: false))
         }
         else {
-            movesArr[movesArr.count-1].setBlackMove(blackOrg: pieceLocation, blackNew: newLocation)
+            movesArr[movesArr.count-1].setBlackMove(blackOrg: pieceLocation, blackNew: newLocation, blackCapture: false)
         }
 
         if whiteTurn == true {//white
@@ -938,12 +942,12 @@ class Board {
         }
     }
 
-    func recordMove(originalPosition: String, newPosition: String) {
-        if whiteTurn == false {//false because it is called after whiteTurn is switched
-            movesArr.append(Move(whiteOrg: originalPosition, whiteNew: newPosition))//logs whites move
+    func recordMove(originalPosition: String, newPosition: String, capture : Bool) {
+        if whiteTurn == true {
+            movesArr.append(Move(whiteOrg: originalPosition, whiteNew: newPosition, whiteCapture: capture))//logs whites move
         }
         else {
-            movesArr[movesArr.count-1].setBlackMove(blackOrg: originalPosition, blackNew: newPosition)//logs blacks move
+            movesArr[movesArr.count-1].setBlackMove(blackOrg: originalPosition, blackNew: newPosition, blackCapture: capture)//logs blacks move
         }
         tableView.reloadData()
     }
@@ -958,14 +962,14 @@ class Board {
         }
     }
 
-    //Universal Chess Interface (UCI) is a format for communicating moves with engines. Very similar to long algebraic notation, it is simple the original coordinate and new coordinate.
+    //Universal Chess Interface (UCI) is a format for communicating moves with engines. Very similar to long algebraic notation, it is simply the original coordinate and new coordinate.
     func UCIMoveArray() -> Array<String>{
         var UCIMoveArr = Array<String>()
         for move in movesArr {
-            let tempWhiteMove = (move.whiteOrg + move.whiteNew).lowercased()
+            let tempWhiteMove = (move.whiteOrg + move.whiteNew)
             UCIMoveArr.append(tempWhiteMove)
             if move.blackOrg != " " && move.blackNew != " " {
-                let tempBlackMove = (move.blackOrg + move.blackNew).lowercased()
+                let tempBlackMove = (move.blackOrg + move.blackNew)
                 UCIMoveArr.append(tempBlackMove)
             }
         }
@@ -985,10 +989,8 @@ class Board {
         let move = runStockFish()
         let originalPosition = String(move.prefix(2)).capitalized
         let newPosition = String(move.suffix(2)).capitalized
-        updateBoard(newPosition: newPosition, originalPosition: originalPosition)
-        checkforCheck(whiteKingLocation: whiteKingLocation, blackKingLocation: blackKingLocation)
-        recordMove(originalPosition: originalPosition, newPosition: newPosition)
+        updateBoard(originalPosition: originalPosition, newPosition: newPosition)
         updateBoardView(buttons: buttonDict)
-
+        checkforCheck(whiteKingLocation: whiteKingLocation, blackKingLocation: blackKingLocation)
     }
 }
