@@ -68,6 +68,7 @@ class Board {
 
     func updateBoard(newPosition: String, originalPosition: String) {
         //updating boardDict
+        
         boardDict[newPosition] = boardDict[originalPosition]
         boardDict[originalPosition] = nil
         boardDict[newPosition]?.piece.hasMoved = true
@@ -76,10 +77,16 @@ class Board {
         //clearing legal moves
         legalMoves = []
         showLegalMoves(arr: legalMoves)
+        if castlingAvailable == true && boardDict[newPosition]?.piece.pieceType == "king" {//if castling is a legal move, and played
+            performCastle(originalPosition: originalPosition, newPosition: newPosition)//castle
+        }
+        if enPassantAvailable == true {//if en passant is legal and played
+            performEnPassant(boardSquareLocation: newPosition, boardSquareToMove: boardSquareToMove!)
+        }
+        if promotionAvailable() == true {promoteToQueen(boardSquareLocation: newPosition)}// if a pawn is on back rank, becomes a quuen
         boardSquareToMove = nil//resetting selected piece to nil
         updateKingLocation(boardSquareLocation: newPosition)//if the kings moves, updates position
         updateMaterialValue(boardSquareLocation: newPosition)
-        if promotionAvailable() == true {promoteToQueen(boardSquareLocation: newPosition)}// if a pawn is on back rank, becomes a quuen
         if whiteTurn == true {whiteTotalLegalMoves = legalMovesOfColor(color: "white"); whiteTurn = false}//sets whites totalMoves and flips turns
         else {blackTotalLegalMoves = legalMovesOfColor(color: "black"); whiteTurn = true; moveCount += 1; showMoveCount()}//sets blacks totalMoves and flips turns
     }
@@ -95,12 +102,6 @@ class Board {
         }
         else if let _ = boardSquareToMove {
             if legalMoves.contains(boardSquareLocation) {//if a legal move square is clicked
-                if castlingAvailable == true {//if castling is a legal move, and played
-                    performCastle(boardSquareLocation: boardSquareLocation, boardSquareToMove: boardSquareToMove!)//castle
-                }
-                if enPassantAvailable == true {//if en passant is legal and played
-                    performEnPassant(boardSquareLocation: boardSquareLocation, boardSquareToMove: boardSquareToMove!)
-                }
                 updateBoard(newPosition: boardSquareLocation, originalPosition: originalCord)//moves pieces, clears legalmoves, records moves, checks for promotion, etc
                 updateBoardView(buttons: buttonDict)//updates images
                 checkforCheck(whiteKingLocation: whiteKingLocation, blackKingLocation: blackKingLocation)
@@ -624,36 +625,36 @@ class Board {
         boardDict["D8"] = BoardSquare(piece: Piece(pieceType: "queen", color: "black", value: 9, hasMoved: false, pieceLegalMoves: Array<String>()), button:buttons["D8"]!)
     }
 
-    func performCastle(boardSquareLocation: String, boardSquareToMove: BoardSquare) {
-        if boardSquareLocation == "G1" && boardSquareToMove.piece.pieceType == "king" {//white kingside
-            boardDict["F1"] = boardDict["H1"]
-            boardSquareToMove.piece.hasMoved = true
-            boardDict[originalCord] = nil
-            boardDict["H1"]?.piece.hasMoved = true
-            boardDict["H1"] = nil
-            castlingAvailable = false
+    func performCastle(originalPosition: String, newPosition: String) {
+        if newPosition == "G1" {//white kingside
+            boardDict[newPosition]!.piece.hasMoved = true//labels the king as having moved
+            boardDict[originalPosition] = nil//deleting the king from original position
+            boardDict["H1"]?.piece.hasMoved = true//labels rook as having moved
+            boardDict["F1"] = boardDict["H1"]//copies rook h1f1
+            boardDict["H1"] = nil//deletes the rook on h1
+            castlingAvailable = false//resets castling as false
         }
-        if boardSquareLocation == "C1" && boardSquareToMove.piece.pieceType == "king" {//white queenside
-            boardDict["D1"] = boardDict["A1"]
-            boardSquareToMove.piece.hasMoved = true
-            boardDict[originalCord] = nil
+        if newPosition == "C1" {//white queenside
+            boardDict[newPosition]!.piece.hasMoved = true
+            boardDict[originalPosition] = nil
             boardDict["A1"]?.piece.hasMoved = true
+            boardDict["D1"] = boardDict["A1"]
             boardDict["A1"] = nil
             castlingAvailable = false
         }
-        if boardSquareLocation == "G8" && boardSquareToMove.piece.pieceType == "king" {//black kingside
-            boardDict["F8"] = boardDict["H8"]
-            boardSquareToMove.piece.hasMoved = true
-            boardDict[originalCord] = nil
+        if newPosition == "G8" {//black kingside
+            boardDict[newPosition]!.piece.hasMoved = true
+            boardDict[originalPosition] = nil
             boardDict["H8"]?.piece.hasMoved = true
+            boardDict["F8"] = boardDict["H8"]
             boardDict["H8"] = nil
             castlingAvailable = false
         }
-        if boardSquareLocation == "C8" && boardSquareToMove.piece.pieceType == "king" {//black queenside
-            boardDict["D8"] = boardDict["A8"]
-            boardSquareToMove.piece.hasMoved = true
-            boardDict[originalCord] = nil
+        if newPosition == "C8" {//black queenside
+            boardDict[newPosition]!.piece.hasMoved = true
+            boardDict[originalPosition] = nil
             boardDict["A8"]?.piece.hasMoved = true
+            boardDict["D8"] = boardDict["A8"]
             boardDict["A8"] = nil
             castlingAvailable = false
         }
