@@ -33,8 +33,8 @@ class Board {
     var blackTotalLegalMoves = Array<String>()
     var movesArr = Array<Move>()
     var tableView : NSTableView!
-    let enableEngine = true
-
+    var enableEngineWhite = false
+    var enableEngineBlack = false
     //this displays the pieces on the view based on boardDict
     func updateBoardView(buttons: Dictionary<String,NSButton>){
         for l in letters {
@@ -92,8 +92,7 @@ class Board {
         boardSquareToMove = nil//resetting selected piece to nil
         updateKingLocation(boardSquareLocation: newPosition)//if the kings moves, updates position
         updateMaterialValue()
-        if whiteTurn == true {whiteTotalLegalMoves = legalMovesOfColor(color: "white"); whiteTurn = false}//sets whites totalMoves and flips turns
-        else {blackTotalLegalMoves = legalMovesOfColor(color: "black"); whiteTurn = true; moveCount += 1; showMoveCount()}//sets blacks totalMoves and flips turns
+        changeTurn()
     }
 
     func boardSquareClicked(boardSquareLocation: String) {//when a button is clicked
@@ -157,6 +156,24 @@ class Board {
         showLegalMoves(arr: legalMoves)
     }
 
+    func changeTurn() {
+        if whiteTurn == true {
+            whiteTotalLegalMoves = legalMovesOfColor(color: "white")
+            whiteTurn = false
+            if enableEngineBlack == true {
+                engineMove()
+                whiteTurn = true
+            }
+        }
+        else {
+            blackTotalLegalMoves = legalMovesOfColor(color: "black")
+            whiteTurn = true; moveCount += 1; showMoveCount()
+            if enableEngineWhite == true {
+                engineMove()
+                whiteTurn = false
+            }
+        }
+    }
     func getLegalMoves(boardSquareLocation: String) -> Array<String> {//returns an array of legalMoves
         if let boardSquare = boardDict[boardSquareLocation] {//if there is a BoardSquare(a piece) at that coordinate, if not nothing happens
             let letterCord = boardSquareLocation.prefix(1)
@@ -706,6 +723,7 @@ class Board {
         globalBlackScore = localBlackScore
         globalMoveCountDisplay = localMoveCount
         globalCheckMateText = localCheckMateText
+        globalCheckMateText.stringValue = " "
         globalwhiteScoreImageViews = localwhiteScoreImageViews
         globalblackScoreImageViews = localblackScoreImageViews
         moveCount = 1
@@ -972,12 +990,13 @@ class Board {
                 let tempBlackMove = (move.blackOrg + move.blackNew)
                 UCIMoveArr.append(tempBlackMove)
             }
+            
         }
         return UCIMoveArr
     }
 
     func runStockFish() -> String{
-        let dirPath = "/Users/haydencollins/Desktop/programming/projects/chess"//path to python file
+        let dirPath = "/Users/haydencollins/Desktop/programming/projects/chess/chess"//path to stockfishpythonfile
         let sys = Python.import("sys")
         sys.path.append(dirPath)
         let stockfish = Python.import("stockfishpythonfile")
@@ -992,5 +1011,22 @@ class Board {
         updateBoard(originalPosition: originalPosition, newPosition: newPosition)
         updateBoardView(buttons: buttonDict)
         checkforCheck(whiteKingLocation: whiteKingLocation, blackKingLocation: blackKingLocation)
+    }
+    
+    func enabledEngine(color: String) {
+        if color == "white" {
+            enableEngineWhite = true
+            enableEngineBlack = false
+            engineMove()
+        }
+        else {
+            if enableEngineWhite == true {
+                enableEngineWhite = false
+                engineMove()
+            }
+            enableEngineWhite = false
+            enableEngineBlack = true
+        }
+        
     }
 }

@@ -91,6 +91,7 @@ class ViewController: NSViewController {
     @IBOutlet weak var blackScore: NSTextField!
     @IBOutlet weak var MoveCount: NSTextField!
     @IBOutlet weak var checkMateText: NSTextField!
+    @IBOutlet weak var engineStatus: NSTextField!
     
     //Score ImageView Variables
     @IBOutlet weak var whiteScoreIndex0: NSImageView!
@@ -313,10 +314,15 @@ class ViewController: NSViewController {
     @IBAction func ButtonActionH8(_ sender: Any) {
         board.boardSquareClicked(boardSquareLocation: "H8")
     }
-    @IBAction func engineMove(_ sender: Any) {
-        board.engineMove()
-    }
     
+    @IBAction func enableEngineWhite(_ sender: Any) {
+        board.enabledEngine(color: "white")
+        engineStatus.stringValue = "Engine Playing as White"
+    }
+    @IBAction func enableEngineBlack(_ sender: Any) {
+        board.enabledEngine(color: "black")
+        engineStatus.stringValue = "Engine Playing as Black"
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -429,6 +435,9 @@ class ViewController: NSViewController {
         board.movesArr = []
         tableView.reloadData()
         board.updateBoardView(buttons: buttonDict)
+        board.enableEngineWhite = false
+        board.enableEngineBlack = false
+        engineStatus.stringValue = "Engine Disabled"
     }
     override var representedObject: Any? {
         didSet {
