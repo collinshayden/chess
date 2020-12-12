@@ -2046,6 +2046,7 @@
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Playing as White" id="ZQa-CA-4k5">
                                     <font key="font" metaFont="system"/>
                                 </textFieldCell>
+                            </textField>
                                 </buttonCell>
                                 <connections>
                                     <action selector="showPopUp:" target="XfG-lQ-9wD" id="2UP-ML-ZQF"/>
