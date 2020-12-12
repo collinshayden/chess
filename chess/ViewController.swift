@@ -315,19 +315,10 @@ class ViewController: NSViewController {
         board.boardSquareClicked(boardSquareLocation: "H8")
     }
     
-    @IBAction func enableEngineWhite(_ sender: Any) {
-        board.enabledEngine(color: "white")
-        engineStatus.stringValue = "Engine Playing as White"
-    }
-    @IBAction func enableEngineBlack(_ sender: Any) {
-        board.enabledEngine(color: "black")
-        engineStatus.stringValue = "Engine Playing as Black"
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         let popOverVC = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "sbPopUpID") as! PopUpViewController
-        //Add viewcontroller as Popup to view subview
         self.addChild(popOverVC)
         popOverVC.view.frame = self.view.frame
         self.view.addSubview(popOverVC.view)
