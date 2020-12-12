@@ -11,7 +11,7 @@ var playingColor = "white"
 var stockfishStatus = false
 
 class PopUpViewController: NSViewController {
-    var delegate = PopUpViewControllerDelegate.self
+    var delegate: PopUpViewControllerDelegate!
     @IBAction func playingColorWhite(_ sender: Any) {
          playingColor = "white"
      }

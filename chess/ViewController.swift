@@ -314,17 +314,45 @@ class ViewController: NSViewController {
     @IBAction func ButtonActionH8(_ sender: Any) {
         board.boardSquareClicked(boardSquareLocation: "H8")
     }
+    @IBAction func resetButton(_ sender: Any) {
+        board = Board()
+        board.setBoardDict(buttons: buttonDict)
+        board.setGlobalVariables(localWhiteScore: whiteScore, localBlackScore: blackScore, localMoveCount: MoveCount, localCheckMateText: checkMateText, localwhiteScoreImageViews: whiteScoreImageViews, localblackScoreImageViews: blackScoreImageViews, localtableView: tableView)
+        board.showMoveCount()
+        board.movesArr = []
+        tableView.reloadData()
+        board.updateBoardView(buttons: buttonDict)
+        board.enableEngineWhite = false
+        board.enableEngineBlack = false
+        engineStatus.stringValue = "Engine Disabled"
+    }
     
-    
-    override func viewDidLoad() {
+    override func viewDidLoad() {// Do any additional setup after loading the view.
         super.viewDidLoad()
         let popUpVC = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "sbPopUpID") as! PopUpViewController
         self.addChild(popUpVC)
         popUpVC.view.frame = self.view.frame
         self.view.addSubview(popUpVC.view)
         popUpVC.delegate = self
-    
+
+        initializeasWhite()
+        setWhiteScoreViewArray()
+        setBlackScoreViewArray()
         
+        //Set Table View Delegate
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        board.setBoardDict(buttons: buttonDict)
+        board.setGlobalVariables(localWhiteScore: whiteScore, localBlackScore: blackScore, localMoveCount: MoveCount, localCheckMateText: checkMateText, localwhiteScoreImageViews: whiteScoreImageViews, localblackScoreImageViews: blackScoreImageViews, localtableView: tableView)
+        board.updateBoardView(buttons: buttonDict)
+    }
+    override var representedObject: Any? {
+        didSet {
+        // Update the view, if already loaded.
+        }
+    }
+    func initializeasWhite() {
         //setting values for ButtonDict
         buttonDict["A1"] = ButtonA1
         buttonDict["A2"] = ButtonA2
@@ -390,7 +418,75 @@ class ViewController: NSViewController {
         buttonDict["H6"] = ButtonH6
         buttonDict["H7"] = ButtonH7
         buttonDict["H8"] = ButtonH8
-        
+    }
+    func initializeasBlack() {
+        //setting values for ButtonDict
+        buttonDict["A1"] = ButtonH8
+        buttonDict["A2"] = ButtonH7
+        buttonDict["A3"] = ButtonH6
+        buttonDict["A4"] = ButtonH5
+        buttonDict["A5"] = ButtonH4
+        buttonDict["A6"] = ButtonH3
+        buttonDict["A7"] = ButtonH2
+        buttonDict["A8"] = ButtonH1
+        buttonDict["B1"] = ButtonG8
+        buttonDict["B2"] = ButtonG7
+        buttonDict["B3"] = ButtonG6
+        buttonDict["B4"] = ButtonG5
+        buttonDict["B5"] = ButtonG4
+        buttonDict["B6"] = ButtonG3
+        buttonDict["B7"] = ButtonG2
+        buttonDict["B8"] = ButtonG1
+        buttonDict["C1"] = ButtonF8
+        buttonDict["C2"] = ButtonF7
+        buttonDict["C3"] = ButtonF6
+        buttonDict["C4"] = ButtonF5
+        buttonDict["C5"] = ButtonF4
+        buttonDict["C6"] = ButtonF3
+        buttonDict["C7"] = ButtonF2
+        buttonDict["C8"] = ButtonF1
+        buttonDict["D1"] = ButtonE8
+        buttonDict["D2"] = ButtonE7
+        buttonDict["D3"] = ButtonE6
+        buttonDict["D4"] = ButtonE5
+        buttonDict["D5"] = ButtonE4
+        buttonDict["D6"] = ButtonE3
+        buttonDict["D7"] = ButtonE2
+        buttonDict["D8"] = ButtonE1
+        buttonDict["E1"] = ButtonD8
+        buttonDict["E2"] = ButtonD7
+        buttonDict["E3"] = ButtonD6
+        buttonDict["E4"] = ButtonD5
+        buttonDict["E5"] = ButtonD4
+        buttonDict["E6"] = ButtonD3
+        buttonDict["E7"] = ButtonD2
+        buttonDict["E8"] = ButtonD1
+        buttonDict["F1"] = ButtonC8
+        buttonDict["F2"] = ButtonC7
+        buttonDict["F3"] = ButtonC6
+        buttonDict["F4"] = ButtonC5
+        buttonDict["F5"] = ButtonC4
+        buttonDict["F6"] = ButtonC3
+        buttonDict["F7"] = ButtonC2
+        buttonDict["F8"] = ButtonC1
+        buttonDict["G1"] = ButtonB8
+        buttonDict["G2"] = ButtonB7
+        buttonDict["G3"] = ButtonB6
+        buttonDict["G4"] = ButtonB5
+        buttonDict["G5"] = ButtonB4
+        buttonDict["G6"] = ButtonB3
+        buttonDict["G7"] = ButtonB2
+        buttonDict["G8"] = ButtonB1
+        buttonDict["H1"] = ButtonA8
+        buttonDict["H2"] = ButtonA7
+        buttonDict["H3"] = ButtonA6
+        buttonDict["H4"] = ButtonA5
+        buttonDict["H5"] = ButtonA4
+        buttonDict["H6"] = ButtonA3
+        buttonDict["H7"] = ButtonA2
+        buttonDict["H8"] = ButtonA1
+    }
+    func setWhiteScoreViewArray() {
         whiteScoreImageViews.append(whiteScoreIndex0)
         whiteScoreImageViews.append(whiteScoreIndex1)
         whiteScoreImageViews.append(whiteScoreIndex2)
@@ -403,7 +499,8 @@ class ViewController: NSViewController {
         whiteScoreImageViews.append(whiteScoreIndex9)
         whiteScoreImageViews.append(whiteScoreIndex10)
         whiteScoreImageViews.append(whiteScoreIndex11)
-        
+    }
+    func setBlackScoreViewArray() {
         blackScoreImageViews.append(blackScoreIndex0)
         blackScoreImageViews.append(blackScoreIndex1)
         blackScoreImageViews.append(blackScoreIndex2)
@@ -416,36 +513,9 @@ class ViewController: NSViewController {
         blackScoreImageViews.append(blackScoreIndex9)
         blackScoreImageViews.append(blackScoreIndex10)
         blackScoreImageViews.append(blackScoreIndex11)
-        
-        //Set Table View Delegate
-        tableView.delegate = self
-        tableView.dataSource = self
-        
-        board.setBoardDict(buttons: buttonDict)
-        board.setGlobalVariables(localWhiteScore: whiteScore, localBlackScore: blackScore, localMoveCount: MoveCount, localCheckMateText: checkMateText, localwhiteScoreImageViews: whiteScoreImageViews, localblackScoreImageViews: blackScoreImageViews, localtableView: tableView)
-        board.updateBoardView(buttons: buttonDict)
-        // Do any additional setup after loading the view.
-    }
-    @IBAction func resetButton(_ sender: Any) {
-        board = Board()
-        board.setBoardDict(buttons: buttonDict)
-        board.setGlobalVariables(localWhiteScore: whiteScore, localBlackScore: blackScore, localMoveCount: MoveCount, localCheckMateText: checkMateText, localwhiteScoreImageViews: whiteScoreImageViews, localblackScoreImageViews: blackScoreImageViews, localtableView: tableView)
-        board.showMoveCount()
-        board.movesArr = []
-        tableView.reloadData()
-        board.updateBoardView(buttons: buttonDict)
-        board.enableEngineWhite = false
-        board.enableEngineBlack = false
-        engineStatus.stringValue = "Engine Disabled"
-    }
-    override var representedObject: Any? {
-        didSet {
-        // Update the view, if already loaded.
-        }
     }
 }
 extension ViewController: NSTableViewDataSource {
-  
   func numberOfRows(in tableView: NSTableView) -> Int {
     return board.movesArr.count
   }

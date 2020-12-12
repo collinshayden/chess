@@ -1760,7 +1760,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="resetButton:" target="XfG-lQ-9wD" id="ChT-9i-UiD"/>
+                                    <action selector="resetButton:" target="XfG-lQ-9wD" id="HTU-eM-T9i"/>
                                 </connections>
                             </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="feh-wg-h7L">
