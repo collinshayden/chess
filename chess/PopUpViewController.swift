@@ -2,13 +2,16 @@
 //  PopUpViewController.swift
 //  chess
 //
+
 //  Created by Hayden Collins on 12/12/20.
+
 //  Copyright © 2020 Hayden Collins. All rights reserved.
 //
 
 import Cocoa
 var playingColor = "white"
 var stockfishStatus = false
+
 
 class PopUpViewController: NSViewController {
     @IBAction func playingColorWhite(_ sender: Any) {
@@ -26,6 +29,7 @@ class PopUpViewController: NSViewController {
     @IBAction func closePopUp(_ sender: Any) {
         self.view.removeFromSuperview()
     }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
