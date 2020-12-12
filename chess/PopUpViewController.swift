@@ -10,6 +10,8 @@ import Cocoa
 var playingColor = "white"
 var stockfishStatus = false
 
+
+
 class PopUpViewController: NSViewController {
     @IBAction func playingColorWhite(_ sender: Any) {
         playingColor = "white"
@@ -38,3 +40,4 @@ class PopUpViewController: NSViewController {
     }
     
 }
+

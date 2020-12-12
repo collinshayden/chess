@@ -322,6 +322,7 @@ class ViewController: NSViewController {
         self.addChild(popOverVC)
         popOverVC.view.frame = self.view.frame
         self.view.addSubview(popOverVC.view)
+        
         if popOverVC.returnPlayingColor() == "white" {
             playingColorText.stringValue = "Playing as White"
             if popOverVC.returnStockfishStatus() == true {
