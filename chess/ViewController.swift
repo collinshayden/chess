@@ -326,6 +326,13 @@ class ViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let popOverVC = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "sbPopUpID") as! PopUpViewController
+        //Add viewcontroller as Popup to view subview
+        self.addChild(popOverVC)
+        popOverVC.view.frame = self.view.frame
+        self.view.addSubview(popOverVC.view)
+    
+        
         //setting values for ButtonDict
         buttonDict["A1"] = ButtonA1
         buttonDict["A2"] = ButtonA2
