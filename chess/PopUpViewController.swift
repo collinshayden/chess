@@ -11,6 +11,7 @@ var playingColor = "white"
 var stockfishStatus = false
 
 class PopUpViewController: NSViewController {
+    var delegate = PopUpViewControllerDelegate.self
     @IBAction func playingColorWhite(_ sender: Any) {
          playingColor = "white"
      }
@@ -30,5 +31,9 @@ class PopUpViewController: NSViewController {
         super.viewDidLoad()
         // Do view setup here.
     }
-    
+}
+
+
+protocol PopUpViewControllerDelegate {
+    func setVariables(playingColor: String, stockfishStatus: Bool)
 }

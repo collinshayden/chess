@@ -1346,7 +1346,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="ButtonActionD8:" target="XfG-lQ-9wD" id="lBX-eX-mYo"/>
+                                    <action selector="ButtonActionD8:" target="XfG-lQ-9wD" id="ZJM-dQ-rcL"/>
                                 </connections>
                             </button>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NuA-Ks-g5s">

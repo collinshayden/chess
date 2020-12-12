@@ -318,10 +318,11 @@ class ViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let popOverVC = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "sbPopUpID") as! PopUpViewController
-        self.addChild(popOverVC)
-        popOverVC.view.frame = self.view.frame
-        self.view.addSubview(popOverVC.view)
+        let popUpVC = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "sbPopUpID") as! PopUpViewController
+        self.addChild(popUpVC)
+        popUpVC.view.frame = self.view.frame
+        self.view.addSubview(popUpVC.view)
+        popUpVC.delegate = self
     
         
         //setting values for ButtonDict
@@ -480,4 +481,21 @@ extension ViewController: NSTableViewDelegate {
     }
     return nil
   }
+}
+
+extension ViewController: PopUpViewControllerDelegate {
+    func setVariables(playingColor: String, stockfishStatus: Bool) {
+        if playingColor == "white" {
+            if stockfishStatus == true {
+                board.enabledEngine(color: "black")
+                engineStatus.stringValue = "Engine Playing as Black"
+            }
+        }
+        else {
+            if stockfishStatus == true {
+                board.enabledEngine(color: "white")
+                engineStatus.stringValue = "Engine Playing as White"
+            }
+        }
+    }
 }
