@@ -14,6 +14,8 @@
 		A1851575252234FC008E6B8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1851574252234FC008E6B8A /* Assets.xcassets */; };
 		A1851578252234FC008E6B8A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A1851576252234FC008E6B8A /* Main.storyboard */; };
 		A1B00C9C252B627E00815126 /* BoardSquare.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B00C9B252B627E00815126 /* BoardSquare.swift */; };
+		A1DE74F12582B6510088490B /* PopUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DE74EF2582B6510088490B /* PopUpViewController.swift */; };
+		A1DE74F22582B6510088490B /* PopUpViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1DE74F02582B6510088490B /* PopUpViewController.xib */; };
 		A1F69F9F2523849800C6AEC9 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F69F9E2523849800C6AEC9 /* Board.swift */; };
 		A1F69FA12523859C00C6AEC9 /* Piece.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F69FA02523859C00C6AEC9 /* Piece.swift */; };
 /* End PBXBuildFile section */
@@ -29,6 +31,8 @@
 		A1851579252234FC008E6B8A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A185157A252234FC008E6B8A /* chess.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = chess.entitlements; sourceTree = "<group>"; };
 		A1B00C9B252B627E00815126 /* BoardSquare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSquare.swift; sourceTree = "<group>"; };
+		A1DE74EF2582B6510088490B /* PopUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpViewController.swift; sourceTree = "<group>"; };
+		A1DE74F02582B6510088490B /* PopUpViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PopUpViewController.xib; sourceTree = "<group>"; };
 		A1F69F9E2523849800C6AEC9 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 		A1F69FA02523859C00C6AEC9 /* Piece.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Piece.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -71,7 +75,8 @@
 				A108D91F255AF69800EC1A9A /* Move.swift */,
 				A1851574252234FC008E6B8A /* Assets.xcassets */,
 				A1851576252234FC008E6B8A /* Main.storyboard */,
-				A139DD53258285F1006FE6BF /* PopUpViewController.swift */,
+				A1DE74EF2582B6510088490B /* PopUpViewController.swift */,
+				A1DE74F02582B6510088490B /* PopUpViewController.xib */,
 				A1851579252234FC008E6B8A /* Info.plist */,
 				A185157A252234FC008E6B8A /* chess.entitlements */,
 			);
@@ -138,6 +143,7 @@
 			files = (
 				A1851575252234FC008E6B8A /* Assets.xcassets in Resources */,
 				A1851578252234FC008E6B8A /* Main.storyboard in Resources */,
+				A1DE74F22582B6510088490B /* PopUpViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,7 +156,7 @@
 			files = (
 				A1F69FA12523859C00C6AEC9 /* Piece.swift in Sources */,
 				A1851573252234FB008E6B8A /* ViewController.swift in Sources */,
-				A139DD54258285F1006FE6BF /* PopUpViewController.swift in Sources */,
+				A1DE74F12582B6510088490B /* PopUpViewController.swift in Sources */,
 				A1851571252234FB008E6B8A /* AppDelegate.swift in Sources */,
 				A1F69F9F2523849800C6AEC9 /* Board.swift in Sources */,
 				A108D920255AF69800EC1A9A /* Move.swift in Sources */,

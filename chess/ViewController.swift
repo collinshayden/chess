@@ -92,6 +92,7 @@ class ViewController: NSViewController {
     @IBOutlet weak var MoveCount: NSTextField!
     @IBOutlet weak var checkMateText: NSTextField!
     @IBOutlet weak var engineStatus: NSTextField!
+    @IBOutlet weak var playingColorText: NSTextField!
     
     //Score ImageView Variables
     @IBOutlet weak var whiteScoreIndex0: NSImageView!
@@ -315,28 +316,27 @@ class ViewController: NSViewController {
         board.boardSquareClicked(boardSquareLocation: "H8")
     }
     
-    @IBAction func enableEngineWhite(_ sender: Any) {
-        board.enabledEngine(color: "white")
-        engineStatus.stringValue = "Engine Playing as White"
-    }
-    @IBAction func enableEngineBlack(_ sender: Any) {
-        board.enabledEngine(color: "black")
-        engineStatus.stringValue = "Engine Playing as Black"
-    }
-    @IBAction func showPopUp(_ sender: Any) {
-        //Create Viewcontroller from storyboard
+    override func viewDidLoad() {
+        super.viewDidLoad()
         let popOverVC = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "sbPopUpID") as! PopUpViewController
-        //Add viewcontroller as Popup to view subview
         self.addChild(popOverVC)
         popOverVC.view.frame = self.view.frame
         self.view.addSubview(popOverVC.view)
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
         
-        
-        
+        if popOverVC.returnPlayingColor() == "white" {
+            playingColorText.stringValue = "Playing as White"
+            if popOverVC.returnStockfishStatus() == true {
+                board.enabledEngine(color: "black")
+                engineStatus.stringValue = "Engine playing as Black"
+            }
+        }
+        else if popOverVC.returnPlayingColor() == "black" {
+            playingColorText.stringValue = "Playing as Black"
+            if popOverVC.returnStockfishStatus() == true {
+                board.enabledEngine(color: "white")
+                engineStatus.stringValue = "Engine playing as White"
+            }
+        }
         
         
         //setting values for ButtonDict
