@@ -1346,7 +1346,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="ButtonActionD8:" target="XfG-lQ-9wD" id="lBX-eX-mYo"/>
+                                    <action selector="ButtonActionD8:" target="XfG-lQ-9wD" id="ZJM-dQ-rcL"/>
                                 </connections>
                             </button>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NuA-Ks-g5s">
@@ -1760,7 +1760,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="resetButton:" target="XfG-lQ-9wD" id="ChT-9i-UiD"/>
+                                    <action selector="resetButton:" target="XfG-lQ-9wD" id="HTU-eM-T9i"/>
                                 </connections>
                             </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="feh-wg-h7L">
