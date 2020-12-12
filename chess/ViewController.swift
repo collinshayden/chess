@@ -92,6 +92,7 @@ class ViewController: NSViewController {
     @IBOutlet weak var MoveCount: NSTextField!
     @IBOutlet weak var checkMateText: NSTextField!
     @IBOutlet weak var engineStatus: NSTextField!
+    @IBOutlet weak var playingColorText: NSTextField!
     
     //Score ImageView Variables
     @IBOutlet weak var whiteScoreIndex0: NSImageView!
@@ -315,14 +316,17 @@ class ViewController: NSViewController {
         board.boardSquareClicked(boardSquareLocation: "H8")
     }
     
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
         let popOverVC = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "sbPopUpID") as! PopUpViewController
+
         self.addChild(popOverVC)
         popOverVC.view.frame = self.view.frame
         self.view.addSubview(popOverVC.view)
     
+
         
         //setting values for ButtonDict
         buttonDict["A1"] = ButtonA1

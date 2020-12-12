@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
@@ -1448,6 +1448,17 @@
                                     <action selector="ButtonActionH6:" target="XfG-lQ-9wD" id="CE1-dq-JaD"/>
                                 </connections>
                             </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qaG-is-MrC">
+                                <rect key="frame" x="359" y="517" width="61" height="62"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" imagePosition="overlaps" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="Cem-Pl-E64">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="ButtonActionG8:" target="XfG-lQ-9wD" id="e3X-E9-VTk"/>
+                                </connections>
+                            </button>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="N3X-n8-4hx">
                                 <rect key="frame" x="240" y="338" width="60" height="60"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1603,17 +1614,6 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qaG-is-MrC">
-                                <rect key="frame" x="359" y="517" width="61" height="62"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" imagePosition="overlaps" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="Cem-Pl-E64">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="ButtonActionG8:" target="XfG-lQ-9wD" id="e3X-E9-VTk"/>
-                                </connections>
-                            </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BdE-r1-apW">
                                 <rect key="frame" x="6" y="26" width="47" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -2013,10 +2013,10 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rNl-4r-V22">
-                                <rect key="frame" x="413" y="26" width="71" height="16"/>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="neh-xw-FQ8">
+                                <rect key="frame" x="503" y="46" width="172" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Move: 1" id="SO0-er-ZXE">
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Engine Disabled" id="Gvr-7A-zqa">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -2031,6 +2031,16 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2Oz-vI-lov">
+                                <rect key="frame" x="503" y="70" width="172" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Playing as White" id="ZQa-CA-4k5">
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="showPopUp:" target="XfG-lQ-9wD" id="2UP-ML-ZQF"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </view>
                     <connections>
@@ -2115,6 +2125,7 @@
                         <outlet property="blackScoreIndex9" destination="doh-Jf-cse" id="Di3-oW-yKe"/>
                         <outlet property="checkMateText" destination="feh-wg-h7L" id="HTd-fa-hsc"/>
                         <outlet property="engineStatus" destination="neh-xw-FQ8" id="quK-Xf-abF"/>
+                        <outlet property="playingColorText" destination="2Oz-vI-lov" id="dHd-Z1-iZf"/>
                         <outlet property="tableView" destination="Kdc-1m-Hpq" id="paj-Os-1Y8"/>
                         <outlet property="whiteScore" destination="k4G-XQ-X6F" id="28o-uA-9s1"/>
                         <outlet property="whiteScoreIndex0" destination="UoX-xl-Irf" id="DpL-kM-yAB"/>
@@ -2165,6 +2176,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
+
                                     <action selector="playingColorWhite:" target="Tqb-Bn-koe" id="6bA-B9-PhZ"/>
                                 </connections>
                             </button>
@@ -2176,6 +2188,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
+
                                     <action selector="playingColorBlack:" target="Tqb-Bn-koe" id="79o-k7-kUJ"/>
                                 </connections>
                             </button>
@@ -2187,6 +2200,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
+
                                     <action selector="stockfishEnable:" target="Tqb-Bn-koe" id="c0s-5d-RNz"/>
                                 </connections>
                             </button>
@@ -2194,10 +2208,12 @@
                                 <rect key="frame" x="437" y="142" width="78" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Disable" bezelStyle="rounded" alignment="center" controlSize="large" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="PaA-gS-leQ">
+
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
+
                                     <action selector="stockfishDisable:" target="Tqb-Bn-koe" id="bOe-uk-acZ"/>
                                 </connections>
                             </button>
@@ -2214,10 +2230,12 @@
                                 <rect key="frame" x="313" y="56" width="67" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" controlSize="large" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zia-Zj-MCL">
+
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
+
                                     <action selector="closePopUp:" target="Tqb-Bn-koe" id="YfD-XU-vJi"/>
                                 </connections>
                             </button>
@@ -2236,6 +2254,7 @@
                 <customObject id="W2X-kc-3nd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="913.5" y="809"/>
+
         </scene>
     </scenes>
     <resources>
