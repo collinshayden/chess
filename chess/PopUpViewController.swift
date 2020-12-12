@@ -34,6 +34,7 @@ class PopUpViewController: NSViewController {
     func returnStockfishStatus() -> Bool{
         return stockfishStatus
     }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.

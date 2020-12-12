@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A108D920255AF69800EC1A9A /* Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = A108D91F255AF69800EC1A9A /* Move.swift */; };
+		A139DD54258285F1006FE6BF /* PopUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A139DD53258285F1006FE6BF /* PopUpViewController.swift */; };
 		A1851571252234FB008E6B8A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1851570252234FB008E6B8A /* AppDelegate.swift */; };
 		A1851573252234FB008E6B8A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1851572252234FB008E6B8A /* ViewController.swift */; };
 		A1851575252234FC008E6B8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1851574252234FC008E6B8A /* Assets.xcassets */; };
@@ -21,6 +22,7 @@
 
 /* Begin PBXFileReference section */
 		A108D91F255AF69800EC1A9A /* Move.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Move.swift; sourceTree = "<group>"; };
+		A139DD53258285F1006FE6BF /* PopUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpViewController.swift; sourceTree = "<group>"; };
 		A185156D252234FB008E6B8A /* chess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = chess.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1851570252234FB008E6B8A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1851572252234FB008E6B8A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
