@@ -319,25 +319,13 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         let popOverVC = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "sbPopUpID") as! PopUpViewController
+
+        //Add viewcontroller as Popup to view subview
         self.addChild(popOverVC)
         popOverVC.view.frame = self.view.frame
         self.view.addSubview(popOverVC.view)
-        
-        if popOverVC.returnPlayingColor() == "white" {
-            playingColorText.stringValue = "Playing as White"
-            if popOverVC.returnStockfishStatus() == true {
-                board.enabledEngine(color: "black")
-                engineStatus.stringValue = "Engine playing as Black"
-            }
-        }
-        else if popOverVC.returnPlayingColor() == "black" {
-            playingColorText.stringValue = "Playing as Black"
-            if popOverVC.returnStockfishStatus() == true {
-                board.enabledEngine(color: "white")
-                engineStatus.stringValue = "Engine playing as White"
-            }
-        }
-        
+    
+
         
         //setting values for ButtonDict
         buttonDict["A1"] = ButtonA1
