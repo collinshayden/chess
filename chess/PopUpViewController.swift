@@ -25,6 +25,9 @@ class PopUpViewController: NSViewController {
          stockfishStatus = false
      }
     @IBAction func closePopUp(_ sender: Any) {
+        if let delegate = delegate {
+            delegate.setVariables(playingColor: playingColor, stockfishStatus: stockfishStatus)
+        }
         self.view.removeFromSuperview()
     }
     override func viewDidLoad() {

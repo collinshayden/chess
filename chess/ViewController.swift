@@ -326,7 +326,6 @@ class ViewController: NSViewController {
         board.enableEngineBlack = false
         engineStatus.stringValue = "Engine Disabled"
     }
-    
     override func viewDidLoad() {// Do any additional setup after loading the view.
         super.viewDidLoad()
         let popUpVC = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "sbPopUpID") as! PopUpViewController
@@ -334,7 +333,7 @@ class ViewController: NSViewController {
         popUpVC.view.frame = self.view.frame
         self.view.addSubview(popUpVC.view)
         popUpVC.delegate = self
-
+        
         initializeasWhite()
         setWhiteScoreViewArray()
         setBlackScoreViewArray()
