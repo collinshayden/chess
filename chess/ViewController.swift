@@ -11,8 +11,8 @@ import Cocoa
 let letters = Array<String>(arrayLiteral: "A","B","C","D","E","F","G","H")
 let numbers = Array<String>(arrayLiteral: "1","2","3","4","5","6","7","8")
 var buttonDict = [String:NSButton]()//dictionary for all the button variables
-var whiteScoreImageViews = Array<NSImageView>()
-var blackScoreImageViews = Array<NSImageView>()
+var whiteMaterialImages = Array<NSImageView>()
+var blackMaterialImages = Array<NSImageView>()
 var moveColumnArr = Array<NSTextField>()
 var whiteColumnArr = Array<NSTextField>()
 var blackColumnArr = Array<NSTextField>()
@@ -315,24 +315,26 @@ class ViewController: NSViewController {
         board.boardSquareClicked(boardSquareLocation: "H8")
     }
     @IBAction func resetButton(_ sender: Any) {
-        board = Board()
         board.setBoardDict(buttons: buttonDict)
-        board.setGlobalVariables(localWhiteScore: whiteScore, localBlackScore: blackScore, localMoveCount: MoveCount, localCheckMateText: checkMateText, localwhiteScoreImageViews: whiteScoreImageViews, localblackScoreImageViews: blackScoreImageViews, localtableView: tableView)
+        board.setGlobalVariables(tempWhiteScore: whiteScore, tempBlackScore: blackScore, tempMoveCount: MoveCount, tempcheckMateText: checkMateText, tempwhiteScoreImageViews: whiteMaterialImages, tempblackScoreImageViews: blackMaterialImages, temptableView: tableView)
         board.showMoveCount()
         board.movesArr = []
         tableView.reloadData()
         board.updateBoardView(buttons: buttonDict)
-        board.enableEngineWhite = false
-        board.enableEngineBlack = false
-        engineStatus.stringValue = "Engine Disabled"
+        showPopUp()
     }
-    override func viewDidLoad() {// Do any additional setup after loading the view.
-        super.viewDidLoad()
+    
+    func showPopUp() {
         let popUpVC = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "sbPopUpID") as! PopUpViewController
         self.addChild(popUpVC)
         popUpVC.view.frame = self.view.frame
         self.view.addSubview(popUpVC.view)
         popUpVC.delegate = self
+    }
+    
+    override func viewDidLoad() {// Do any additional setup after loading the view.
+        super.viewDidLoad()
+        showPopUp()
         
         initializeasWhite()
         setWhiteScoreViewArray()
@@ -343,14 +345,16 @@ class ViewController: NSViewController {
         tableView.dataSource = self
         
         board.setBoardDict(buttons: buttonDict)
-        board.setGlobalVariables(localWhiteScore: whiteScore, localBlackScore: blackScore, localMoveCount: MoveCount, localCheckMateText: checkMateText, localwhiteScoreImageViews: whiteScoreImageViews, localblackScoreImageViews: blackScoreImageViews, localtableView: tableView)
+        board.setGlobalVariables(tempWhiteScore: whiteScore, tempBlackScore: blackScore, tempMoveCount: MoveCount, tempcheckMateText: checkMateText, tempwhiteScoreImageViews: whiteMaterialImages, tempblackScoreImageViews: blackMaterialImages, temptableView: tableView)
         board.updateBoardView(buttons: buttonDict)
     }
+    
     override var representedObject: Any? {
         didSet {
         // Update the view, if already loaded.
         }
     }
+    
     func initializeasWhite() {
         //setting values for ButtonDict
         buttonDict["A1"] = ButtonA1
@@ -418,6 +422,7 @@ class ViewController: NSViewController {
         buttonDict["H7"] = ButtonH7
         buttonDict["H8"] = ButtonH8
     }
+    
     func initializeasBlack() {
         //setting values for ButtonDict
         buttonDict["A1"] = ButtonH8
@@ -485,35 +490,38 @@ class ViewController: NSViewController {
         buttonDict["H7"] = ButtonA2
         buttonDict["H8"] = ButtonA1
     }
+    
     func setWhiteScoreViewArray() {
-        whiteScoreImageViews.append(whiteScoreIndex0)
-        whiteScoreImageViews.append(whiteScoreIndex1)
-        whiteScoreImageViews.append(whiteScoreIndex2)
-        whiteScoreImageViews.append(whiteScoreIndex3)
-        whiteScoreImageViews.append(whiteScoreIndex4)
-        whiteScoreImageViews.append(whiteScoreIndex5)
-        whiteScoreImageViews.append(whiteScoreIndex6)
-        whiteScoreImageViews.append(whiteScoreIndex7)
-        whiteScoreImageViews.append(whiteScoreIndex8)
-        whiteScoreImageViews.append(whiteScoreIndex9)
-        whiteScoreImageViews.append(whiteScoreIndex10)
-        whiteScoreImageViews.append(whiteScoreIndex11)
+        whiteMaterialImages.append(whiteScoreIndex0)
+        whiteMaterialImages.append(whiteScoreIndex1)
+        whiteMaterialImages.append(whiteScoreIndex2)
+        whiteMaterialImages.append(whiteScoreIndex3)
+        whiteMaterialImages.append(whiteScoreIndex4)
+        whiteMaterialImages.append(whiteScoreIndex5)
+        whiteMaterialImages.append(whiteScoreIndex6)
+        whiteMaterialImages.append(whiteScoreIndex7)
+        whiteMaterialImages.append(whiteScoreIndex8)
+        whiteMaterialImages.append(whiteScoreIndex9)
+        whiteMaterialImages.append(whiteScoreIndex10)
+        whiteMaterialImages.append(whiteScoreIndex11)
     }
+    
     func setBlackScoreViewArray() {
-        blackScoreImageViews.append(blackScoreIndex0)
-        blackScoreImageViews.append(blackScoreIndex1)
-        blackScoreImageViews.append(blackScoreIndex2)
-        blackScoreImageViews.append(blackScoreIndex3)
-        blackScoreImageViews.append(blackScoreIndex4)
-        blackScoreImageViews.append(blackScoreIndex5)
-        blackScoreImageViews.append(blackScoreIndex6)
-        blackScoreImageViews.append(blackScoreIndex7)
-        blackScoreImageViews.append(blackScoreIndex8)
-        blackScoreImageViews.append(blackScoreIndex9)
-        blackScoreImageViews.append(blackScoreIndex10)
-        blackScoreImageViews.append(blackScoreIndex11)
+        blackMaterialImages.append(blackScoreIndex0)
+        blackMaterialImages.append(blackScoreIndex1)
+        blackMaterialImages.append(blackScoreIndex2)
+        blackMaterialImages.append(blackScoreIndex3)
+        blackMaterialImages.append(blackScoreIndex4)
+        blackMaterialImages.append(blackScoreIndex5)
+        blackMaterialImages.append(blackScoreIndex6)
+        blackMaterialImages.append(blackScoreIndex7)
+        blackMaterialImages.append(blackScoreIndex8)
+        blackMaterialImages.append(blackScoreIndex9)
+        blackMaterialImages.append(blackScoreIndex10)
+        blackMaterialImages.append(blackScoreIndex11)
     }
 }
+
 extension ViewController: NSTableViewDataSource {
   func numberOfRows(in tableView: NSTableView) -> Int {
     return board.movesArr.count
