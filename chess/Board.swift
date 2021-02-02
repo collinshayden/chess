@@ -18,12 +18,12 @@ class Board {
     var originalCord : String!
     var castlingAvailable = false
     var enPassantAvailable = false
-    var globalWhiteScore : NSTextField!
-    var globalBlackScore : NSTextField!
-    var globalMoveCountDisplay : NSTextField!
-    var globalCheckMateText : NSTextField!
-    var globalwhiteScoreImageViews : Array<NSImageView>!
-    var globalblackScoreImageViews : Array<NSImageView>!
+    var whiteMaterialText : NSTextField!
+    var blackMaterialText : NSTextField!
+    var moveCountText : NSTextField!
+    var checkMateText : NSTextField!
+    var whiteMaterialImages : Array<NSImageView>!
+    var blackMaterialImages : Array<NSImageView>!
     var blackMaterial = Array<Piece>()
     var whiteMaterial = Array<Piece>()
     var moveCount = 1
@@ -35,6 +35,7 @@ class Board {
     var tableView : NSTableView!
     var enableEngineWhite = false
     var enableEngineBlack = false
+    
     //this displays the pieces on the view based on boardDict
     func updateBoardView(buttons: Dictionary<String,NSButton>){
         for l in letters {
@@ -63,7 +64,7 @@ class Board {
                 }
             }
         }
-        showMaterialValue(globalWhiteScore: globalWhiteScore, globalBlackScore: globalBlackScore)
+        showMaterialValue(whiteMaterialText: whiteMaterialText, blackMaterialText: blackMaterialText)
     }
 
     func updateBoard(originalPosition: String, newPosition: String) {
@@ -718,16 +719,16 @@ class Board {
         }
     }
 
-    func setGlobalVariables(localWhiteScore: NSTextField, localBlackScore: NSTextField, localMoveCount: NSTextField, localCheckMateText: NSTextField, localwhiteScoreImageViews: Array<NSImageView>, localblackScoreImageViews: Array<NSImageView>, localtableView: NSTableView) {
-        globalWhiteScore = localWhiteScore
-        globalBlackScore = localBlackScore
-        globalMoveCountDisplay = localMoveCount
-        globalCheckMateText = localCheckMateText
-        globalCheckMateText.stringValue = " "
-        globalwhiteScoreImageViews = localwhiteScoreImageViews
-        globalblackScoreImageViews = localblackScoreImageViews
+    func setGlobalVariables(tempWhiteScore: NSTextField, tempBlackScore: NSTextField, tempMoveCount: NSTextField, tempcheckMateText: NSTextField, tempwhiteScoreImageViews: Array<NSImageView>, tempblackScoreImageViews: Array<NSImageView>, temptableView: NSTableView) {
+        whiteMaterialText = tempWhiteScore
+        blackMaterialText = tempBlackScore
+        moveCountText = tempMoveCount
+        checkMateText = tempcheckMateText
+        checkMateText.stringValue = " "
+        whiteMaterialImages = tempwhiteScoreImageViews
+        blackMaterialImages = tempblackScoreImageViews
         moveCount = 1
-        tableView = localtableView
+        tableView = temptableView
     }
 
     func updateMaterialValue() {
@@ -755,7 +756,7 @@ class Board {
         }
     }
 
-    func showMaterialValue(globalWhiteScore: NSTextField, globalBlackScore: NSTextField) {
+    func showMaterialValue(whiteMaterialText: NSTextField, blackMaterialText: NSTextField) {
         var whiteMaterialValue = 0
         var blackMaterialValue = 0
         for l in letters {
@@ -772,18 +773,18 @@ class Board {
         let blackNumScore = blackMaterialValue-whiteMaterialValue
 
         if whiteNumScore > 0 {
-            globalWhiteScore.stringValue = "+" + String(whiteNumScore)
-            globalWhiteScore.setFrameOrigin(NSPoint(x:46 + (whiteMaterial.count * 20), y: 46))
+            whiteMaterialText.stringValue = "+" + String(whiteNumScore)
+            whiteMaterialText.setFrameOrigin(NSPoint(x:46 + (whiteMaterial.count * 20), y: 46))
         }
         else {
-            globalWhiteScore.stringValue = " "
+            whiteMaterialText.stringValue = " "
         }
         if blackNumScore > 0 {
-            globalBlackScore.stringValue = "+" + String(blackNumScore)
-            globalBlackScore.setFrameOrigin(NSPoint(x:46 + (blackMaterial.count * 20), y: 22))
+            blackMaterialText.stringValue = "+" + String(blackNumScore)
+            blackMaterialText.setFrameOrigin(NSPoint(x:46 + (blackMaterial.count * 20), y: 22))
         }
         else {
-            globalBlackScore.stringValue = " "
+            blackMaterialText.stringValue = " "
         }
 
         //ordering the arrays
@@ -804,27 +805,27 @@ class Board {
             }
         }
         //clearing the piece images
-        for imageView in globalwhiteScoreImageViews {
+        for imageView in whiteMaterialImages {
             imageView.image = nil
         }
-        for imageView in globalblackScoreImageViews {
+        for imageView in blackMaterialImages {
             imageView.image = nil
         }
         //displaying the piece images
         if blackMaterial.count > 0 {
             for index in 0...blackMaterial.count-1 {
-                globalblackScoreImageViews[index].image = NSImage(named: blackMaterial[index].pieceType + "_white")
+                blackMaterialImages[index].image = NSImage(named: blackMaterial[index].pieceType + "_white")
             }
         }
         if whiteMaterial.count > 0 {
             for index in 0...whiteMaterial.count-1 {
-                globalwhiteScoreImageViews[index].image = NSImage(named: whiteMaterial[index].pieceType + "_black")
+                whiteMaterialImages[index].image = NSImage(named: whiteMaterial[index].pieceType + "_black")
             }
         }
     }
 
     func showMoveCount() {
-        globalMoveCountDisplay.stringValue = "Move: " + String(moveCount)
+        moveCountText.stringValue = "Move: " + String(moveCount)
     }
 
     //returns an array of all legal moves, disregarding discovered checks
@@ -953,10 +954,10 @@ class Board {
 
     func checkForCheckMate() {
         if updatedLegalMovesOfColor(color: "white").isEmpty {
-            globalCheckMateText.stringValue = "Black wins by checkmate"
+            checkMateText.stringValue = "Black wins by checkmate"
         }
         if updatedLegalMovesOfColor(color: "black").isEmpty {
-            globalCheckMateText.stringValue = "White wins by checkmate"
+            checkMateText.stringValue = "White wins by checkmate"
         }
     }
 
