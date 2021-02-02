@@ -64,19 +64,20 @@ class Board {
                 if (boardDict[l+n] == nil) {
                     buttons[l+n]?.image = nil
                 }
+                
             }
         }
         showMaterialValue(whiteMaterialText: whiteMaterialText, blackMaterialText: blackMaterialText)
     }
 
     func updateBoard(originalPosition: String, newPosition: String) {
-        if boardDict[newPosition] != nil {
+        if boardDict[newPosition] != nil {//if there is a capture
             recordMove(originalPosition: originalPosition, newPosition: newPosition, capture: true)
         }
-        else {
+        else {//if there is no capture
             recordMove(originalPosition: originalPosition, newPosition: newPosition, capture: false)
         }
-        //updating boardDict
+        //updating position of piece in boardDict
         boardDict[newPosition] = boardDict[originalPosition]
         boardDict[originalPosition] = nil
         boardDict[newPosition]?.piece.hasMoved = true
@@ -139,7 +140,7 @@ class Board {
                 }
             }
         }
-        //displays a dot for a legal move on a nil square, and adds corners capturable pieces
+        //displays a dot for a legal move on a nil square, and adds corners for capturable pieces
         for cord in legalMoves {
             if boardDict[cord] == nil {
                 buttons[cord]?.image = NSImage(named: "legalmovedot")
@@ -157,6 +158,12 @@ class Board {
         boardSquareToMove = boardDict[boardSquareLocation]//sets the selected piece to the new piece
         originalCord = boardSquareLocation//saves the current coordinate of the piece
         showLegalMoves(arr: legalMoves)
+        if whiteInCheck == true {
+            buttons[whiteKingLocation]?.image = NSImage(named: "king_white_check")
+        }
+        if blackInCheck == true {
+            buttons[blackKingLocation]?.image = NSImage(named: "king_black_check")
+        }
     }
 
     func changeTurn() {
@@ -176,7 +183,10 @@ class Board {
                 whiteTurn = false
             }
         }
+        whiteInCheck = false
+        blackInCheck = false
     }
+    
     func getLegalMoves(boardSquareLocation: String) -> Array<String> {//returns an array of legalMoves
         if let boardSquare = boardDict[boardSquareLocation] {//if there is a BoardSquare(a piece) at that coordinate, if not nothing happens
             let letterCord = boardSquareLocation.prefix(1)
@@ -843,7 +853,7 @@ class Board {
         return totalLegalMoves
     }
 
-    //returns an array of all legal moves, checking for discovered checks into account
+    //returns an array of all legal moves, checking for discovered checks
     func updatedLegalMovesOfColor(color: String) -> Array<String> {
         var updatedTotalLegalMoves = Array<String>()
         for l in letters {
@@ -997,7 +1007,6 @@ class Board {
                 let tempBlackMove = (move.blackOrg + move.blackNew)
                 UCIMoveArr.append(tempBlackMove)
             }
-            
         }
         return UCIMoveArr
     }
