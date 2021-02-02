@@ -23,7 +23,7 @@ class Board {
     var whiteMaterialText : NSTextField!
     var blackMaterialText : NSTextField!
     var moveCountText : NSTextField!
-    var checkMateText : NSTextField!
+    var gameEndText : NSTextField!
     var originalCord : String!
     var tableView : NSTableView!
     var boardSquareToMove : BoardSquare?
@@ -185,6 +185,7 @@ class Board {
         }
         whiteInCheck = false
         blackInCheck = false
+        checkForDraw()
     }
     
     func getLegalMoves(boardSquareLocation: String) -> Array<String> {//returns an array of legalMoves
@@ -731,12 +732,12 @@ class Board {
         }
     }
 
-    func setGlobalVariables(tempWhiteScore: NSTextField, tempBlackScore: NSTextField, tempMoveCount: NSTextField, tempcheckMateText: NSTextField, tempwhiteScoreImageViews: Array<NSImageView>, tempblackScoreImageViews: Array<NSImageView>, temptableView: NSTableView) {
+    func setGlobalVariables(tempWhiteScore: NSTextField, tempBlackScore: NSTextField, tempMoveCount: NSTextField, tempgameEndText: NSTextField, tempwhiteScoreImageViews: Array<NSImageView>, tempblackScoreImageViews: Array<NSImageView>, temptableView: NSTableView) {
         whiteMaterialText = tempWhiteScore
         blackMaterialText = tempBlackScore
         moveCountText = tempMoveCount
-        checkMateText = tempcheckMateText
-        checkMateText.stringValue = " "
+        gameEndText = tempgameEndText
+        gameEndText.stringValue = " "
         whiteMaterialImages = tempwhiteScoreImageViews
         blackMaterialImages = tempblackScoreImageViews
         moveCount = 1
@@ -969,11 +970,20 @@ class Board {
     }
 
     func checkForCheckMate() {
-        if updatedLegalMovesOfColor(color: "white").isEmpty {
-            checkMateText.stringValue = "Black wins by checkmate"
+        if updatedLegalMovesOfColor(color: "white").isEmpty && whiteInCheck == true {
+            gameEndText.stringValue = "Black wins by checkmate"
+        }
+        if updatedLegalMovesOfColor(color: "black").isEmpty && blackInCheck == true{
+            gameEndText.stringValue = "White wins by checkmate"
+        }
+    }
+    
+    func checkForDraw() {
+        if updatedLegalMovesOfColor(color: "white").isEmpty{
+            gameEndText.stringValue = "Draw by Stalemate"
         }
         if updatedLegalMovesOfColor(color: "black").isEmpty {
-            checkMateText.stringValue = "White wins by checkmate"
+            gameEndText.stringValue = "Draw by Stalemate"
         }
     }
 
