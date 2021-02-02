@@ -13,29 +13,31 @@ class Board {
     var boardDict = [String:BoardSquare]()
     var buttons = [String:NSButton]()
     var legalMoves = Array<String>()
-    var whiteTurn = true
-    var boardSquareToMove : BoardSquare?
-    var originalCord : String!
-    var castlingAvailable = false
-    var enPassantAvailable = false
-    var whiteMaterialText : NSTextField!
-    var blackMaterialText : NSTextField!
-    var moveCountText : NSTextField!
-    var checkMateText : NSTextField!
+    var whiteTotalLegalMoves = Array<String>()
+    var blackTotalLegalMoves = Array<String>()
+    var movesArr = Array<Move>()
     var whiteMaterialImages : Array<NSImageView>!
     var blackMaterialImages : Array<NSImageView>!
     var blackMaterial = Array<Piece>()
     var whiteMaterial = Array<Piece>()
+    var whiteMaterialText : NSTextField!
+    var blackMaterialText : NSTextField!
+    var moveCountText : NSTextField!
+    var checkMateText : NSTextField!
+    var originalCord : String!
+    var tableView : NSTableView!
+    var boardSquareToMove : BoardSquare?
+    var whiteTurn = true
+    var castlingAvailable = false
+    var enPassantAvailable = false
+    var whiteInCheck = false
+    var blackInCheck = false
+    var enableEngineWhite = false
+    var enableEngineBlack = false
     var moveCount = 1
     var whiteKingLocation = "E1"
     var blackKingLocation = "E8"
-    var whiteTotalLegalMoves = Array<String>()
-    var blackTotalLegalMoves = Array<String>()
-    var movesArr = Array<Move>()
-    var tableView : NSTableView!
-    var enableEngineWhite = false
-    var enableEngineBlack = false
-    
+   
     //this displays the pieces on the view based on boardDict
     func updateBoardView(buttons: Dictionary<String,NSButton>){
         for l in letters {
@@ -107,7 +109,7 @@ class Board {
         }
         else if let _ = boardSquareToMove {
             if legalMoves.contains(boardSquareLocation) {//if a legal move square is clicked
-                updateBoard(originalPosition: originalCord, newPosition: boardSquareLocation)//moves pieces, clears legalmoves, records moves, checks for promotion, etc
+                updateBoard(originalPosition: originalCord, newPosition: boardSquareLocation)
                 updateBoardView(buttons: buttonDict)//updates images
                 checkforCheck(whiteKingLocation: whiteKingLocation, blackKingLocation: blackKingLocation)
             }
@@ -938,12 +940,16 @@ class Board {
         if whiteTurn == true {
             if legalMovesOfColor(color: "black").contains(whiteKingLocation) {
                 inCheck(kingLocation: whiteKingLocation, color: "white")
+                whiteInCheck = true
             }
+            else { whiteInCheck = false }
         }
         if whiteTurn == false {
             if legalMovesOfColor(color: "white").contains(blackKingLocation) {
                 inCheck(kingLocation: blackKingLocation, color: "black")
+                blackInCheck = true
             }
+            else { blackInCheck = false }
         }
     }
 
