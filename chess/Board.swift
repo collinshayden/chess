@@ -183,9 +183,10 @@ class Board {
                 whiteTurn = false
             }
         }
+        checkforCheck(whiteKingLocation: whiteKingLocation, blackKingLocation: blackKingLocation)//update inCheck variables
+        checkForGameEnd()
         whiteInCheck = false
         blackInCheck = false
-        checkForDraw()
     }
     
     func getLegalMoves(boardSquareLocation: String) -> Array<String> {//returns an array of legalMoves
@@ -772,16 +773,13 @@ class Board {
     func showMaterialValue(whiteMaterialText: NSTextField, blackMaterialText: NSTextField) {
         var whiteMaterialValue = 0
         var blackMaterialValue = 0
-        for l in letters {
-            for n in numbers {
-                if boardDict[l+n]?.piece.color == "white" {
-                    whiteMaterialValue += (boardDict[l+n]?.piece.value)!
-                }
-                else if boardDict[l+n]?.piece.color == "black" {
-                    blackMaterialValue += (boardDict[l+n]?.piece.value)!
-                }
-            }
+        for i in whiteMaterial {
+            whiteMaterialValue += i.value
         }
+        for j in blackMaterial {
+            blackMaterialValue += j.value
+        }
+        
         let whiteNumScore = whiteMaterialValue-blackMaterialValue
         let blackNumScore = blackMaterialValue-whiteMaterialValue
 
@@ -950,43 +948,37 @@ class Board {
     func checkforCheck(whiteKingLocation: String, blackKingLocation: String) {
         if whiteTurn == true {
             if legalMovesOfColor(color: "black").contains(whiteKingLocation) {
-                inCheck(kingLocation: whiteKingLocation, color: "white")
+                buttons[whiteKingLocation]!.image = NSImage(named: "king_white_check")
                 whiteInCheck = true
             }
             else { whiteInCheck = false }
         }
         if whiteTurn == false {
             if legalMovesOfColor(color: "white").contains(blackKingLocation) {
-                inCheck(kingLocation: blackKingLocation, color: "black")
+                buttons[blackKingLocation]!.image = NSImage(named: "king_black_check")
                 blackInCheck = true
             }
             else { blackInCheck = false }
         }
     }
-
-    func inCheck(kingLocation: String, color: String) {
-        buttons[kingLocation]!.image = NSImage(named: "king_" + color + "_check")
-        checkForCheckMate()
-    }
-
-    func checkForCheckMate() {
+    
+    func checkForGameEnd() {
+        //checkmate
         if updatedLegalMovesOfColor(color: "white").isEmpty && whiteInCheck == true {
             gameEndText.stringValue = "Black wins by checkmate"
         }
         if updatedLegalMovesOfColor(color: "black").isEmpty && blackInCheck == true{
             gameEndText.stringValue = "White wins by checkmate"
         }
-    }
-    
-    func checkForDraw() {
-        if updatedLegalMovesOfColor(color: "white").isEmpty{
+        //draw by stalemate
+        if updatedLegalMovesOfColor(color: "white").isEmpty && whiteInCheck == false{
             gameEndText.stringValue = "Draw by Stalemate"
         }
-        if updatedLegalMovesOfColor(color: "black").isEmpty {
+        if updatedLegalMovesOfColor(color: "black").isEmpty && blackInCheck == false{
             gameEndText.stringValue = "Draw by Stalemate"
         }
     }
-
+   
     func recordMove(originalPosition: String, newPosition: String, capture : Bool) {
         if whiteTurn == true {
             movesArr.append(Move(whiteOrg: originalPosition, whiteNew: newPosition, whiteCapture: capture))//logs whites move
