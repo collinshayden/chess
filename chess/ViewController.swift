@@ -316,7 +316,7 @@ class ViewController: NSViewController {
     }
     @IBAction func resetButton(_ sender: Any) {
         board.setBoardDict(buttons: buttonDict)
-        board.setGlobalVariables(tempWhiteScore: whiteScore, tempBlackScore: blackScore, tempMoveCount: MoveCount, tempcheckMateText: checkMateText, tempwhiteScoreImageViews: whiteMaterialImages, tempblackScoreImageViews: blackMaterialImages, temptableView: tableView)
+        board.setGlobalVariables(tempWhiteScore: whiteScore, tempBlackScore: blackScore, tempMoveCount: MoveCount, tempgameEndText: checkMateText, tempwhiteScoreImageViews: whiteMaterialImages, tempblackScoreImageViews: blackMaterialImages, temptableView: tableView)
         board.showMoveCount()
         board.movesArr = []
         tableView.reloadData()
@@ -345,7 +345,7 @@ class ViewController: NSViewController {
         tableView.dataSource = self
         
         board.setBoardDict(buttons: buttonDict)
-        board.setGlobalVariables(tempWhiteScore: whiteScore, tempBlackScore: blackScore, tempMoveCount: MoveCount, tempcheckMateText: checkMateText, tempwhiteScoreImageViews: whiteMaterialImages, tempblackScoreImageViews: blackMaterialImages, temptableView: tableView)
+        board.setGlobalVariables(tempWhiteScore: whiteScore, tempBlackScore: blackScore, tempMoveCount: MoveCount, tempgameEndText: checkMateText, tempwhiteScoreImageViews: whiteMaterialImages, tempblackScoreImageViews: blackMaterialImages, temptableView: tableView)
         board.updateBoardView(buttons: buttonDict)
     }
     
