@@ -539,7 +539,8 @@ extension ViewController: NSTableViewDelegate {
   func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
     var text: String = ""
     var cellIdentifier: String = ""
-    
+    var testboard = board.movesArr
+
     //setting the text varialbe for each column
     if tableColumn == tableView.tableColumns[0] {
       text = String(row+1)
