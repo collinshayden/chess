@@ -745,6 +745,31 @@ class Board {
         tableView = temptableView
     }
 
+    func insufficientMaterial() -> Bool {//function to determine if there is no mating material left on the board, making it a draw
+        var materialRemaining = Array<String>()
+        for l in letters {
+            for n in numbers {
+                if boardDict[l+n] != nil {
+                    if boardDict[l+n]?.piece.pieceType == "pawn" || boardDict[l+n]?.piece.pieceType == "queen" || boardDict[l+n]?.piece.pieceType == "rook" {//checking if there is mating material left
+                        return false
+                    }
+                    else {
+                        materialRemaining.append((boardDict[l+n]?.piece.pieceType)!)
+                    }
+                }
+            }
+        }
+        if materialRemaining.count == 2 || materialRemaining.count == 3 {//just kings or kings + bishop/knight
+            return true
+        }
+        else if materialRemaining.count == 4 && materialRemaining.contains("king") && materialRemaining.contains("knight") && materialRemaining.contains("bishop") == false {//just kings and 2 knights, no bishop
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    
     func updateMaterialValue() {
         //resets material to empty arrays
         blackMaterial = []
@@ -962,10 +987,13 @@ class Board {
         }
         //draw by stalemate
         if updatedLegalMovesOfColor(color: "white").isEmpty && whiteInCheck == false{
-            gameEndText.stringValue = "Draw by Stalemate"
+            gameEndText.stringValue = "Draw by stalemate"
         }
         if updatedLegalMovesOfColor(color: "black").isEmpty && blackInCheck == false{
-            gameEndText.stringValue = "Draw by Stalemate"
+            gameEndText.stringValue = "Draw by stalemate"
+        }
+        if insufficientMaterial() == true {
+            gameEndText.stringValue = "Draw by insufficient material"
         }
     }
    
