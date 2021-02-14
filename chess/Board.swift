@@ -745,6 +745,43 @@ class Board {
         tableView = temptableView
     }
 
+    func insufficientMaterial() -> Bool {//function to determine if there is no mating material left on the board, making it a draw
+        var totalMaterialRemaining = Array<String>()
+        var whiteMaterialRemaining = Array<String>()
+        var blackMaterialRemaining = Array<String>()
+        for l in letters {
+            for n in numbers {
+                if boardDict[l+n] != nil {
+                    if boardDict[l+n]?.piece.pieceType == "pawn" || boardDict[l+n]?.piece.pieceType == "queen" || boardDict[l+n]?.piece.pieceType == "rook" {//checking if there is mating material left
+                        return false
+                    }
+                    else {
+                        totalMaterialRemaining.append((boardDict[l+n]?.piece.pieceType)!)
+                        if boardDict[l+n]?.piece.color == "white" {
+                            whiteMaterialRemaining.append((boardDict[l+n]?.piece.pieceType)!)
+                        }
+                        else {
+                            blackMaterialRemaining.append((boardDict[l+n]?.piece.pieceType)!)
+                        }
+                    }
+                }
+            }
+        }
+        if totalMaterialRemaining.count == 2 || totalMaterialRemaining.count == 3 {//just kings or kings + bishop/knight
+            return true
+        }
+        else if totalMaterialRemaining.count == 4 && totalMaterialRemaining.contains("king") && totalMaterialRemaining.contains("knight") && totalMaterialRemaining.contains("bishop") == false {//just kings and 2 knights, no bishop
+            return true
+        }
+        else if whiteMaterialRemaining.count == 2 && blackMaterialRemaining.count == 2 {//both sides have only 1 knight/bishop
+            return true
+        }
+        
+        else {
+            return false
+        }
+    }
+    
     func updateMaterialValue() {
         //resets material to empty arrays
         blackMaterial = []
@@ -962,10 +999,13 @@ class Board {
         }
         //draw by stalemate
         if updatedLegalMovesOfColor(color: "white").isEmpty && whiteInCheck == false{
-            gameEndText.stringValue = "Draw by Stalemate"
+            gameEndText.stringValue = "Draw by stalemate"
         }
         if updatedLegalMovesOfColor(color: "black").isEmpty && blackInCheck == false{
-            gameEndText.stringValue = "Draw by Stalemate"
+            gameEndText.stringValue = "Draw by stalemate"
+        }
+        if insufficientMaterial() == true {
+            gameEndText.stringValue = "Draw by insufficient material"
         }
     }
    
