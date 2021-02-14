@@ -746,7 +746,9 @@ class Board {
     }
 
     func insufficientMaterial() -> Bool {//function to determine if there is no mating material left on the board, making it a draw
-        var materialRemaining = Array<String>()
+        var totalMaterialRemaining = Array<String>()
+        var whiteMaterialRemaining = Array<String>()
+        var blackMaterialRemaining = Array<String>()
         for l in letters {
             for n in numbers {
                 if boardDict[l+n] != nil {
@@ -754,17 +756,27 @@ class Board {
                         return false
                     }
                     else {
-                        materialRemaining.append((boardDict[l+n]?.piece.pieceType)!)
+                        totalMaterialRemaining.append((boardDict[l+n]?.piece.pieceType)!)
+                        if boardDict[l+n]?.piece.color == "white" {
+                            whiteMaterialRemaining.append((boardDict[l+n]?.piece.pieceType)!)
+                        }
+                        else {
+                            blackMaterialRemaining.append((boardDict[l+n]?.piece.pieceType)!)
+                        }
                     }
                 }
             }
         }
-        if materialRemaining.count == 2 || materialRemaining.count == 3 {//just kings or kings + bishop/knight
+        if totalMaterialRemaining.count == 2 || totalMaterialRemaining.count == 3 {//just kings or kings + bishop/knight
             return true
         }
-        else if materialRemaining.count == 4 && materialRemaining.contains("king") && materialRemaining.contains("knight") && materialRemaining.contains("bishop") == false {//just kings and 2 knights, no bishop
+        else if totalMaterialRemaining.count == 4 && totalMaterialRemaining.contains("king") && totalMaterialRemaining.contains("knight") && totalMaterialRemaining.contains("bishop") == false {//just kings and 2 knights, no bishop
             return true
         }
+        else if whiteMaterialRemaining.count == 2 && blackMaterialRemaining.count == 2 {//both sides have only 1 knight/bishop
+            return true
+        }
+        
         else {
             return false
         }
